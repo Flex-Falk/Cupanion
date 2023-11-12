@@ -3,26 +3,46 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/DataInputScreen">
 
     <fragment
-        android:id="@+id/FirstFragment"
-        android:name="com.example.cupanionapp.FirstFragment"
-        android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
+        android:id="@+id/DataInputScreen"
+        android:name="com.example.cupanionapp.DataInputScreen"
+        android:label="@string/DataInputScreen"
+        tools:layout="@layout/data_input_screen.xml">
 
         <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/action_DataInputScreen_to_DataDisplayScreen"
+            app:destination="@id/DataDisplayScreen" />
     </fragment>
     <fragment
-        android:id="@+id/SecondFragment"
-        android:name="com.example.cupanionapp.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
+        android:id="@+id/DataDisplayScreen"
+        android:name="com.example.cupanionapp.DataDisplayScreen"
+        android:label="@string/DataDisplayScreen"
+        tools:layout="@layout/data_display_screen.xml">
 
         <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            android:id="@+id/action_DataDisplayScreen_to_DrinkSelectionScreen"
+            app:destination="@id/DrinkSelectionScreen" />
+    </fragment>
+    <fragment
+        android:id="@+id/DrinkSelectionScreen"
+        android:name="com.example.cupanionapp.DrinkSelectionScreen"
+        android:label="@string/DrinkSelectionScreen"
+        tools:layout="@layout/drink_selection_screen.xml">
+
+        <action
+            android:id="@+id/action_DrinkSelectionScreen_to_FillingQuantityScreen"
+            app:destination="@id/FillingQuantityScreen" />
+    </fragment>
+    <fragment
+        android:id="@+id/FillingQuantityScreen"
+        android:name="com.example.cupanionapp.FillingQuantityScreen"
+        android:label="@string/FillingQuantityScreen"
+        tools:layout="@layout/filling_quantity_screen.xml">
+
+        <action
+            android:id="@+id/action_FillingQuantityScreen_to_DataDisplayScreen"
+            app:destination="@id/DataDisplayScreen" />
     </fragment>
 </navigation>
