@@ -1,17 +1,12 @@
 <resources>
-    <string name="app_name">CupanionApp</string>
-    <string name="action_settings">Settings</string>
+    <string name="app_name">Cupanion</string>
+    <string name="action_settings">Edit Stats</string>
 
     <!-- Strings used for fragments for navigation -->
-    <string name="DataInputScreen">Data Input Screen</string>
-    <string name="DataDisplayScreen">Data Display Screen</string>
-    <string name="DrinkSelectionScreen">Data Display Screen</string>
-    <string name="FillingQuantityScreen">Data Display Screen</string>
 
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
+    <string name="DataInputScreen">Please Put In Your User Data</string>
+    <string name="DataDisplayScreen">Your Stats</string>
+    <string name="DrinkSelectionScreen">Select Your Drink</string>
+    <string name="FillingQuantityScreen">Time To Make Your Drink</string>
 
-    <string name="lorem_ipsum">
-        This is a test text.
-    </string>
 </resources>

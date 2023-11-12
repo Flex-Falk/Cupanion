@@ -30,12 +30,17 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAnchorView(R.id.fab)
-                .setAction("Action", null).show()
+        // Set up destination change listener
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            // Check if the new destination is DataInputScreen or DataDisplayScreen
+            if (destination.id == R.id.DataInputScreen || destination.id == R.id.DataDisplayScreen) {
+                // Hide the back button when in DataDisplayScreen
+                supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            } else {
+                // Show the back button for other destinations
+                supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            }
         }
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -45,18 +50,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_settings -> {
+                // Replace with the actual navigation action for the desired screen
+                findNavController(R.id.nav_host_fragment_content_main).navigate(R.id.action_toDataInputScreen)
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
+
+        // Check if the current destination is DataDisplayScreen
+        if (navController.currentDestination?.id == R.id.DataDisplayScreen) {
+            // Do not allow navigating up (disabling back button) when in DataDisplayScreen
+            return false
+        }
+
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 }
