@@ -71,4 +71,18 @@ class MainActivity : AppCompatActivity() {
 
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
+
+    override fun onBackPressed() {
+        val navController = findNavController(R.id.nav_host_fragment_content_main)
+
+        // Check if the current destination is DataInputScreen or DataDisplayScreen
+        if (navController.currentDestination?.id == R.id.DataInputScreen || navController.currentDestination?.id == R.id.DataDisplayScreen) {
+            // Nullify the back action when in DataDisplayScreen
+            // Optionally, you can perform a specific action or show a toast here
+            // For example: Toast.makeText(this, "Back button pressed in DataDisplayScreen", Toast.LENGTH_SHORT).show()
+        } else {
+            // For other destinations, handle the back action as usual
+            super.onBackPressed()
+        }
+    }
 }
