@@ -12,6 +12,41 @@
         android:layout_height="match_parent"
         android:padding="16dp">
 
+        <!-- TextInput for the UserName -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutUserName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextUserName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Name"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- TextInput for the UserGoal -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutUserGoal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayoutUserName">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextUserGoal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Getränkeziel"
+                android:inputType="number"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/buttonToDataDisplayScreen"
             android:layout_width="wrap_content"

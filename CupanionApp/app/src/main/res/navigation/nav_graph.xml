@@ -5,58 +5,73 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/DataInputScreen">
 
+    <!-- DataInputScreen -->
     <fragment
         android:id="@+id/DataInputScreen"
         android:name="com.example.cupanionapp.DataInputScreen"
         android:label="@string/DataInputScreen"
         tools:layout="@layout/data_input_screen">
 
+        <!-- Forward Navigation -->
         <action
             android:id="@+id/action_toDataDisplayScreen"
             app:destination="@id/DataDisplayScreen" />
 
+        <!-- Navigation through Top App Bar to edit Userdata-->
         <action
             android:id="@+id/action_toDataInputScreen"
             app:destination="@id/DataInputScreen" />
     </fragment>
+
+    <!-- DataDisplayScreen -->
     <fragment
         android:id="@+id/DataDisplayScreen"
         android:name="com.example.cupanionapp.DataDisplayScreen"
         android:label="@string/DataDisplayScreen"
         tools:layout="@layout/data_display_screen">
 
+        <!-- Forward Navigation -->
         <action
             android:id="@+id/action_toDrinkSelectionScreen"
             app:destination="@id/DrinkSelectionScreen" />
 
+        <!-- Navigation through Top App Bar to edit Userdata-->
         <action
             android:id="@+id/action_toDataInputScreen"
             app:destination="@id/DataInputScreen" />
     </fragment>
+
+    <!-- DrinkSelectionScreen -->
     <fragment
         android:id="@+id/DrinkSelectionScreen"
         android:name="com.example.cupanionapp.DrinkSelectionScreen"
         android:label="@string/DrinkSelectionScreen"
         tools:layout="@layout/drink_selection_screen">
 
+        <!-- Forward Navigation -->
         <action
             android:id="@+id/action_toFillingQuantityScreen"
             app:destination="@id/FillingQuantityScreen" />
 
+        <!-- Navigation through Top App Bar to edit Userdata-->
         <action
             android:id="@+id/action_toDataInputScreen"
             app:destination="@id/DataInputScreen" />
     </fragment>
+
+    <!-- FillingQuantityScreen -->
     <fragment
         android:id="@+id/FillingQuantityScreen"
         android:name="com.example.cupanionapp.FillingQuantityScreen"
         android:label="@string/FillingQuantityScreen"
         tools:layout="@layout/filling_quantity_screen">
 
+        <!-- Forward Navigation -->
         <action
             android:id="@+id/action_toDataDisplayScreen"
             app:destination="@id/DataDisplayScreen" />
 
+        <!-- Navigation through Top App Bar to edit Userdata-->
         <action
             android:id="@+id/action_toDataInputScreen"
             app:destination="@id/DataInputScreen" />

@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.cupanionapp.databinding.DataDisplayScreenBinding
 import com.google.android.material.snackbar.Snackbar
@@ -16,31 +17,47 @@ import com.google.android.material.snackbar.Snackbar
 class DataDisplayScreen : Fragment() {
 
     private var _binding: DataDisplayScreenBinding? = null
+    private lateinit var userDataViewModel: UserData  // Ensure this line is present
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         _binding = DataDisplayScreenBinding.inflate(inflater, container, false)
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Access the ViewModel to get user data
+        userDataViewModel = ViewModelProvider(requireActivity()).get(UserData::class.java)  // Ensure this line is present
+
+        // Display user data.
+        binding.textViewUserName.text = "Name: ${userDataViewModel.user_name}"
+        binding.textViewUserToasts.text = "Mit Leuten angestoßen: ${userDataViewModel.user_toasts}"
+
+        // Display the drinking progress.
+        binding.textViewUserProgress.text = "Trinkfortschritt: ${userDataViewModel.user_drinks_number.toString()} / ${userDataViewModel.user_goal.toString()}"
+
+        // Display if the user should drive or not.
+        if(userDataViewModel.user_drive == false){
+            binding.textViewUserDrive.text = "Fahrtüchtigkeit: Nicht mehr in Ordnung"
+        } else{
+            binding.textViewUserDrive.text = "Fahrtüchtigkeit: In Ordnung"
+        }
+
+        // Display what drinks the user has drunk.
+        if(userDataViewModel.user_drinks_number != 0) {
+            binding.textViewUserDrinksList.text = "Getrunkene Getränke: ${userDataViewModel.user_drinks_list?.joinToString(", ")}"
+        } else {
+            binding.textViewUserDrinksList.text ="Getrunkene Getränke: noch keine"
+        }
+
         binding.buttonToDrinkSelectionScreen.setOnClickListener {
-            Log.d("DataDisplayScreen", "Button Clicked")
             findNavController().navigate(R.id.action_toDrinkSelectionScreen)
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

@@ -12,6 +12,15 @@
         android:layout_height="match_parent"
         android:padding="16dp">
 
+        <!-- TextOutput for the Current Drink being mixed -->
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/textCurrentDrink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Current Drink"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/buttonToDrinkSelectionScreen"
             android:layout_width="wrap_content"

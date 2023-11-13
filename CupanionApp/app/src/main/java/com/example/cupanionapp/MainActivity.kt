@@ -11,6 +11,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
 import com.example.cupanionapp.databinding.ActivityMainBinding
+import androidx.lifecycle.ViewModelProvider
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -68,7 +70,6 @@ class MainActivity : AppCompatActivity() {
             // Do not allow navigating up (disabling back button) when in DataDisplayScreen
             return false
         }
-
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
@@ -77,11 +78,8 @@ class MainActivity : AppCompatActivity() {
 
         // Check if the current destination is DataInputScreen or DataDisplayScreen
         if (navController.currentDestination?.id == R.id.DataInputScreen || navController.currentDestination?.id == R.id.DataDisplayScreen) {
-            // Nullify the back action when in DataDisplayScreen
-            // Optionally, you can perform a specific action or show a toast here
-            // For example: Toast.makeText(this, "Back button pressed in DataDisplayScreen", Toast.LENGTH_SHORT).show()
+            // Nullify the back action when in DataInputScreen or DataDisplayScreen
         } else {
-            // For other destinations, handle the back action as usual
             super.onBackPressed()
         }
     }

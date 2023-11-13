@@ -12,16 +12,34 @@
         android:layout_height="match_parent"
         android:padding="16dp">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/buttonToFillingQuantityScreen"
+        <!-- Spezi mit Schuss Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonSpeziSchuss"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginStart="300dp"
-            android:layout_marginTop="500dp"
+            android:text="Spezi mit Schuss"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@android:drawable/ic_input_add" />
+            android:onClick="onDrinkButtonClick" />
 
+        <!-- Calpirinha Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonCaipirinha"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Caipirinha"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonSpeziSchuss"
+            android:onClick="onDrinkButtonClick" />
+
+        <!-- Wasser mit Schuss Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonWasserSchuss"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Wasser mit Schuss"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonCaipirinha"
+            android:onClick="onDrinkButtonClick" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </RelativeLayout>

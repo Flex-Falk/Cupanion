@@ -1,12 +1,12 @@
 <resources>
     <string name="app_name">Cupanion</string>
-    <string name="action_settings">Edit Stats</string>
+    <string name="action_settings">Nutzerdaten bearbeiten</string>
 
     <!-- Strings used for fragments for navigation -->
 
-    <string name="DataInputScreen">Please Put In Your User Data</string>
-    <string name="DataDisplayScreen">Your Stats</string>
-    <string name="DrinkSelectionScreen">Select Your Drink</string>
-    <string name="FillingQuantityScreen">Time To Make Your Drink</string>
+    <string name="DataInputScreen">Bitte gib deine Nutzerdaten ein.</string>
+    <string name="DataDisplayScreen">Deine Statistiken</string>
+    <string name="DrinkSelectionScreen">Wähle ein Getränk</string>
+    <string name="FillingQuantityScreen">Mixing-Time!</string>
 
 </resources>
