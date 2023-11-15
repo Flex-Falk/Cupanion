@@ -21,6 +21,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
+        <!-- Indication lines and text for the current drink being mixed -->
+        <com.example.cupanionapp.CanvasView
+            android:id="@+id/drinkcanvas"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/buttonToDrinkSelectionScreen"
             android:layout_width="wrap_content"

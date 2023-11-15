@@ -38,5 +38,7 @@ class FillingQuantityScreen : Fragment() {
             userDataViewModel.finishedMixing()      // Update all drink related data when finished mixing.
             findNavController().navigate(R.id.action_toDataDisplayScreen)
         }
+
+        binding.drinkcanvas.setStateCurrentDrink(userDataViewModel.current_drink)
     }
 }
