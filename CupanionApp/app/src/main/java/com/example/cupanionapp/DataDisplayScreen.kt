@@ -17,7 +17,7 @@ import com.google.android.material.snackbar.Snackbar
 class DataDisplayScreen : Fragment() {
 
     private var _binding: DataDisplayScreenBinding? = null
-    private lateinit var userDataViewModel: UserData  // Ensure this line is present
+    private lateinit var userDataViewModel: UserData
 
     private val binding get() = _binding!!
 
@@ -32,8 +32,10 @@ class DataDisplayScreen : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // This is a DataSender for the ESP32
+
         // Access the ViewModel to get user data
-        userDataViewModel = ViewModelProvider(requireActivity()).get(UserData::class.java)  // Ensure this line is present
+        userDataViewModel = ViewModelProvider(requireActivity()).get(UserData::class.java)
 
         // Display user data.
         binding.textViewUserName.text = "Name: ${userDataViewModel.user_name}"
@@ -57,6 +59,8 @@ class DataDisplayScreen : Fragment() {
         }
 
         binding.buttonToDrinkSelectionScreen.setOnClickListener {
+            // Sends UserData to the ESP32
+            userDataViewModel.sendUserData()
             findNavController().navigate(R.id.action_toDrinkSelectionScreen)
         }
     }

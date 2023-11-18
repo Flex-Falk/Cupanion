@@ -33,12 +33,17 @@ class DataInputScreen : Fragment() {
 
         userDataViewModel = ViewModelProvider(requireActivity()).get(UserData::class.java)
 
+        // Sends UserData to the ESP32
+        userDataViewModel.sendUserData()
+
+
         // Observe changes in the entire user data
         userDataViewModel.userData.observe(viewLifecycleOwner) { userData ->
             // Update UI with user data
             binding.editTextUserName.setText(userData.user_name)
             binding.editTextUserGoal.setText(userData.user_goal?.toString())
         }
+
 
         binding.buttonToDataDisplayScreen.setOnClickListener {
             // Get data from UI
@@ -50,6 +55,9 @@ class DataInputScreen : Fragment() {
 
                 // Update user data in the ViewModel
                 userDataViewModel.updateUserData(name, goal.toInt())
+
+                // Sends UserData to the ESP32
+                userDataViewModel.sendUserData()
 
                 // Navigate to DataDisplayScreen
                 findNavController().navigate(R.id.action_toDataDisplayScreen)

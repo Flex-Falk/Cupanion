@@ -36,6 +36,8 @@ class FillingQuantityScreen : Fragment() {
 
         binding.buttonToDrinkSelectionScreen.setOnClickListener {
             userDataViewModel.finishedMixing()      // Update all drink related data when finished mixing.
+            // Sends UserData to the ESP32
+            userDataViewModel.sendUserData()
             findNavController().navigate(R.id.action_toDataDisplayScreen)
         }
 

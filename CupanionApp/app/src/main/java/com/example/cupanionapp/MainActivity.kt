@@ -10,9 +10,8 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import com.androidnetworking.AndroidNetworking
 import com.example.cupanionapp.databinding.ActivityMainBinding
-import androidx.lifecycle.ViewModelProvider
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,7 +25,10 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        AndroidNetworking.initialize(getApplicationContext());
+
         setSupportActionBar(binding.toolbar)
+
 
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(navController.graph)
@@ -54,8 +56,6 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_settings -> {
-                // Replace with the actual navigation action for the desired screen
-                findNavController(R.id.nav_host_fragment_content_main).navigate(R.id.action_toDataInputScreen)
                 true
             }
             else -> super.onOptionsItemSelected(item)
