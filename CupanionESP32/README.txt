@@ -1,0 +1,1 @@
+If you want to use the Serial Monitor, set its baud rate to 115200.

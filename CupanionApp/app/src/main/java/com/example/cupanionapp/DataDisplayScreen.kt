@@ -32,10 +32,11 @@ class DataDisplayScreen : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // This is a DataSender for the ESP32
-
         // Access the ViewModel to get user data
         userDataViewModel = ViewModelProvider(requireActivity()).get(UserData::class.java)
+
+        // Sends UserData to the ESP32
+        userDataViewModel.sendUserData()
 
         // Display user data.
         binding.textViewUserName.text = "Name: ${userDataViewModel.user_name}"
@@ -59,8 +60,6 @@ class DataDisplayScreen : Fragment() {
         }
 
         binding.buttonToDrinkSelectionScreen.setOnClickListener {
-            // Sends UserData to the ESP32
-            userDataViewModel.sendUserData()
             findNavController().navigate(R.id.action_toDrinkSelectionScreen)
         }
     }

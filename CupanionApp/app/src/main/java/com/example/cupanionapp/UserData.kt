@@ -3,14 +3,11 @@ package com.example.cupanionapp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.androidnetworking.AndroidNetworking
 import com.androidnetworking.AndroidNetworking.post
 import com.androidnetworking.common.Priority
 import com.androidnetworking.error.ANError
 import com.androidnetworking.interfaces.JSONObjectRequestListener
 import org.json.JSONObject
-import com.google.gson.Gson
-
 
 /**
  * View Model for the UserData.
@@ -74,28 +71,34 @@ class UserData : ViewModel() {
         }
     }
 
-    //sends the UserData to the ESP32
+    // Sends the UserData to the ESP32
     fun sendUserData(){
-        //format the data into a JSONObject
+        // Format the data into a JSONObject
         val userdata_for_esp = JSONObject()
         userdata_for_esp.put("user_name", user_name)
         userdata_for_esp.put("user_goal", user_goal)
         userdata_for_esp.put("current_drink", current_drink)
         userdata_for_esp.put("user_drinks_number", user_drinks_number)
-        userdata_for_esp.put("user_drinks_list", user_drinks_list)
+        val drinksString = user_drinks_list.joinToString(separator = ", ")         // Convert user_drinks_list to a single string
+        userdata_for_esp.put("user_drinks_list", drinksString)
         userdata_for_esp.put("user_drive", user_drive)
         userdata_for_esp.put("user_toasts", user_toasts)
 
-        // Send data via HTTP POST
+        // Send data via HTTP POST using Fast Android Networking
         post("http://192.168.4.1/post")
-            .addJSONObjectBody(userdata_for_esp) // Use addJSONObjectBody to add JSON data
-            .setTag("data")
+            .addJSONObjectBody(userdata_for_esp)
+            .addHeaders("Content-Type", "application/json")
             .setPriority(Priority.MEDIUM)
             .build()
             .getAsJSONObject(object : JSONObjectRequestListener {
-                override fun onResponse(response: JSONObject?) {
+                override fun onResponse(response: JSONObject) {
+                    // Handle the response (if needed)
+                    println("Response: $response")
                 }
-                override fun onError(anError: ANError?) {
+
+                override fun onError(anError: ANError) {
+                    // Handle error (e.g., network error)
+                    anError.printStackTrace()
                 }
             })
     }

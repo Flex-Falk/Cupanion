@@ -31,24 +31,20 @@ class DrinkSelectionScreen : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         userDataViewModel = ViewModelProvider(requireActivity()).get(UserData::class.java)
 
+        // Sends UserData to the ESP32
+        userDataViewModel.sendUserData()
+
         // Set click listeners for drink buttons and update the current drink
         binding.buttonSpeziSchuss.setOnClickListener {
             userDataViewModel.updateCurrentDrink("Spezi mit Schuss")
-            // Sends UserData to the ESP32
-            userDataViewModel.sendUserData()
             findNavController().navigate(R.id.action_toFillingQuantityScreen)
-
         }
         binding.buttonCaipirinha.setOnClickListener {
             userDataViewModel.updateCurrentDrink("Caipirinha")
-            // Sends UserData to the ESP32
-            userDataViewModel.sendUserData()
             findNavController().navigate(R.id.action_toFillingQuantityScreen)
         }
         binding.buttonWasserSchuss.setOnClickListener {
             userDataViewModel.updateCurrentDrink("Wasser mit Schuss")
-            // Sends UserData to the ESP32
-            userDataViewModel.sendUserData()
             findNavController().navigate(R.id.action_toFillingQuantityScreen)
         }
     }

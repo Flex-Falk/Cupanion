@@ -31,13 +31,14 @@ class FillingQuantityScreen : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         userDataViewModel = ViewModelProvider(requireActivity()).get(UserData::class.java)
 
+        // Sends UserData to the ESP32
+        userDataViewModel.sendUserData()
+
         // Display the current drink being mixed.
         binding.textCurrentDrink.text = "Aktuell wird gemixt: ${userDataViewModel.current_drink}"
 
         binding.buttonToDrinkSelectionScreen.setOnClickListener {
             userDataViewModel.finishedMixing()      // Update all drink related data when finished mixing.
-            // Sends UserData to the ESP32
-            userDataViewModel.sendUserData()
             findNavController().navigate(R.id.action_toDataDisplayScreen)
         }
 

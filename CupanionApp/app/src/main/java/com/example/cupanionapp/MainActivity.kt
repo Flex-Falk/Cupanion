@@ -25,10 +25,10 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        AndroidNetworking.initialize(getApplicationContext());
+        // Initialize Fast Android Networking
+        AndroidNetworking.initialize(applicationContext)
 
         setSupportActionBar(binding.toolbar)
-
 
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(navController.graph)
@@ -56,6 +56,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_settings -> {
+                findNavController(R.id.nav_host_fragment_content_main).navigate(R.id.DataInputScreen)
                 true
             }
             else -> super.onOptionsItemSelected(item)
