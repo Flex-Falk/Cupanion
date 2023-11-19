@@ -38,6 +38,9 @@ class DataDisplayScreen : Fragment() {
         // Sends UserData to the ESP32
         userDataViewModel.sendUserData()
 
+        // Update the Toast Value from the ESP32
+        userDataViewModel.updateToastValue()
+
         // Display user data.
         binding.textViewUserName.text = "Name: ${userDataViewModel.user_name}"
         binding.textViewUserToasts.text = "Mit Leuten angestoßen: ${userDataViewModel.user_toasts}"
@@ -56,7 +59,7 @@ class DataDisplayScreen : Fragment() {
         if(userDataViewModel.user_drinks_number != 0) {
             binding.textViewUserDrinksList.text = "Getrunkene Getränke: ${userDataViewModel.user_drinks_list?.joinToString(", ")}"
         } else {
-            binding.textViewUserDrinksList.text ="Getrunkene Getränke: noch keine"
+            binding.textViewUserDrinksList.text ="Bisherige Getränke: noch keine"
         }
 
         binding.buttonToDrinkSelectionScreen.setOnClickListener {

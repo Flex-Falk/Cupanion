@@ -34,6 +34,9 @@ class DrinkSelectionScreen : Fragment() {
         // Sends UserData to the ESP32
         userDataViewModel.sendUserData()
 
+        // Update the Toast Value from the ESP32
+        userDataViewModel.updateToastValue()
+
         // Set click listeners for drink buttons and update the current drink
         binding.buttonSpeziSchuss.setOnClickListener {
             userDataViewModel.updateCurrentDrink("Spezi mit Schuss")

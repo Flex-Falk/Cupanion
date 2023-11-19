@@ -23,7 +23,7 @@ class UserData : ViewModel() {
     var user_goal: Int? = null
 
     // This represents the drink which is currently being mixed.
-    var current_drink: String? = null
+    var user_current_drink: String? = null
 
     // This list represents the drinks the user has mixed.
     var user_drinks_list: MutableList<String> = mutableListOf()
@@ -40,7 +40,7 @@ class UserData : ViewModel() {
 
     // Function to update current drink
     fun updateCurrentDrink(drink: String) {
-        current_drink = drink
+        user_current_drink = drink
 
         // Notify observers with the updated user data
         _userData.value = this
@@ -58,7 +58,7 @@ class UserData : ViewModel() {
     fun finishedMixing(){
         // Append a new drink to the drink list..
         // Check if current_drink is not null before adding.
-        current_drink?.let {
+        user_current_drink?.let {
             user_drinks_list.add(it)
         }
 
@@ -77,12 +77,11 @@ class UserData : ViewModel() {
         val userdata_for_esp = JSONObject()
         userdata_for_esp.put("user_name", user_name)
         userdata_for_esp.put("user_goal", user_goal)
-        userdata_for_esp.put("current_drink", current_drink)
+        userdata_for_esp.put("user_current_drink", user_current_drink)
         userdata_for_esp.put("user_drinks_number", user_drinks_number)
         val drinksString = user_drinks_list.joinToString(separator = ", ")         // Convert user_drinks_list to a single string
         userdata_for_esp.put("user_drinks_list", drinksString)
         userdata_for_esp.put("user_drive", user_drive)
-        userdata_for_esp.put("user_toasts", user_toasts)
 
         // Send data via HTTP POST using Fast Android Networking
         post("http://192.168.4.1/post")
@@ -91,15 +90,17 @@ class UserData : ViewModel() {
             .setPriority(Priority.MEDIUM)
             .build()
             .getAsJSONObject(object : JSONObjectRequestListener {
-                override fun onResponse(response: JSONObject) {
-                    // Handle the response (if needed)
-                    println("Response: $response")
-                }
-
-                override fun onError(anError: ANError) {
-                    // Handle error (e.g., network error)
-                    anError.printStackTrace()
-                }
+                override fun onResponse(response: JSONObject) {}
+                override fun onError(anError: ANError) {}
             })
+    }
+
+    // Function to update the toast value gotten from the ESP32
+    // This will probably be implemented through a HTTP Get Request similar to the sendUserData() function, but backwards
+    fun updateToastValue(){
+        user_toasts = 0
+
+        // Notify observers with the updated user data
+        _userData.value = this
     }
 }
