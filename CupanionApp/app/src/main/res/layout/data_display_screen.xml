@@ -8,65 +8,213 @@
     tools:context=".DataDisplayScreen">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="16dp">
 
         <!-- TextOutput for the UserName -->
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/textViewUserName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="User Name"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/textViewUserDrinksListMCVP1"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:text="User Drinks List"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/imageView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:src="@drawable/baseline_emoji_people_24"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/textViewUserName"
+                    style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="User Name"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageView3"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- TextOutput for the amount of User Toasts -->
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/textViewUserToasts"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="User Toasts"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/textViewUserDrinksListMCVP2"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewUserName"/>
+            app:layout_constraintTop_toBottomOf="@+id/textViewUserDrinksListMCVP1" >
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/imageView4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:src="@drawable/baseline_person_add_alt_24"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/textViewUserToasts"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="User Toasts"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageView4"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- TextOutput for the Drinking Progress -->
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/textViewUserProgress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="User Drinking Progress"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/textViewUserDrinksListMCVP3"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewUserToasts"/>
+            app:layout_constraintTop_toBottomOf="@+id/textViewUserDrinksListMCVP2" >
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/imageView5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:src="@drawable/baseline_mood_24"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/textViewUserProgress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="User Drinking Progress"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageView5"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- TextOutput for the Driving Situation -->
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/textViewUserDrive"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="User Drive"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/textViewUserDrinksListMCVP4"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewUserProgress"/>
+            app:layout_constraintTop_toBottomOf="@+id/textViewUserDrinksListMCVP3" >
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:src="@drawable/baseline_directions_car_24"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/textViewUserDrive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="User Drive"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageView"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- TextOutput for the Drinks List -->
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/textViewUserDrinksList"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="User Drinks List"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/textViewUserDrinksListMCVP5"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewUserDrive"/>
+            app:layout_constraintTop_toBottomOf="@+id/textViewUserDrinksListMCVP4" >
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/textViewUserDrinksList"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="User Drinks List"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageView2"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:src="@drawable/baseline_nightlife_24"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/buttonToDrinkSelectionScreen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginBottom="32dp"
-            android:layout_marginEnd="32dp"
-            app:srcCompat="@android:drawable/ic_input_add"
-            />
+            app:srcCompat="@android:drawable/ic_input_add" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_anchor="@+id/constraintLayout"
+        app:layout_anchorGravity="center">
+    </FrameLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
