@@ -55,8 +55,9 @@ class UserData : ViewModel() {
         _userData.value = this
     }
 
+    // Function for what happens when the mixing of a drink is concluded
     fun finishedMixing(){
-        // Append a new drink to the drink list..
+        // Append a new drink to the drink list.
         // Check if current_drink is not null before adding.
         user_current_drink?.let {
             user_drinks_list.add(it)
@@ -71,6 +72,7 @@ class UserData : ViewModel() {
         }
     }
 
+    // Displays the consumed drinks in a better format
     fun displayDrinkList(): String {
         val drinkCountMap = mutableMapOf<String, Int>()
 
@@ -84,6 +86,7 @@ class UserData : ViewModel() {
 
         return formattedList
     }
+
     // Sends the UserData to the ESP32
     fun sendUserData(){
         // Format the data into a JSONObject
