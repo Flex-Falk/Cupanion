@@ -25,8 +25,11 @@ class UserData : ViewModel() {
     // This represents the drink which is currently being mixed.
     var user_current_drink: String? = null
 
-    // This list represents the drinks the user has mixed.
+    // This list represents the drinks the user has mixed in raw form.
     var user_drinks_list: MutableList<String> = mutableListOf()
+
+    // This list represents the drinks the user has mixed in a printable String form.
+    var user_drinks_list_formatted: String? = null
 
     // This represents the amount of drinks the user has mixed.
     var user_drinks_number: Int? = 0
@@ -63,6 +66,9 @@ class UserData : ViewModel() {
             user_drinks_list.add(it)
         }
 
+        //update the DrinkList String
+        drinkListToString()
+
         // Update the drink number
         user_drinks_number = user_drinks_list.size
 
@@ -73,7 +79,7 @@ class UserData : ViewModel() {
     }
 
     // Displays the consumed drinks in a better format
-    fun displayDrinkList(): String {
+    fun drinkListToString() {
         val drinkCountMap = mutableMapOf<String, Int>()
 
         // Count occurrences of each drink
@@ -81,10 +87,8 @@ class UserData : ViewModel() {
             drinkCountMap[drink] = drinkCountMap.getOrDefault(drink, 0) + 1
         }
 
-        // Generate the formatted string
-        val formattedList = drinkCountMap.entries.joinToString("\n") { "${it.value}x ${it.key}" }
-
-        return formattedList
+        // Generate the formatted string and update the UserDrinksListFormatted
+        user_drinks_list_formatted = "\n" + drinkCountMap.entries.joinToString("\n") { "${it.value}x ${it.key}" }
     }
 
     // Sends the UserData to the ESP32
@@ -95,8 +99,7 @@ class UserData : ViewModel() {
         userdata_for_esp.put("user_goal", user_goal)
         userdata_for_esp.put("user_current_drink", user_current_drink)
         userdata_for_esp.put("user_drinks_number", user_drinks_number)
-        val drinksString = user_drinks_list.joinToString(separator = ", ")         // Convert user_drinks_list to a single string
-        userdata_for_esp.put("user_drinks_list", drinksString)
+        userdata_for_esp.put("user_drinks_list", user_drinks_list_formatted)
         userdata_for_esp.put("user_drive", user_drive)
 
         // Send data via HTTP POST using Fast Android Networking

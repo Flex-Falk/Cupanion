@@ -57,7 +57,7 @@ class DataDisplayScreen : Fragment() {
 
         // Display what drinks the user has drunk.
         if(userDataViewModel.user_drinks_number != 0) {
-            binding.textViewUserDrinksList.text = "Getrunkene Getränke:\n${userDataViewModel.displayDrinkList()}"
+            binding.textViewUserDrinksList.text = "Getrunkene Getränke:${userDataViewModel.user_drinks_list_formatted}"
         } else {
             binding.textViewUserDrinksList.text ="Bisherige Getränke: noch keine"
         }
