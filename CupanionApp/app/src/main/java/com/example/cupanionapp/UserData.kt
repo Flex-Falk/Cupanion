@@ -71,6 +71,19 @@ class UserData : ViewModel() {
         }
     }
 
+    fun displayDrinkList(): String {
+        val drinkCountMap = mutableMapOf<String, Int>()
+
+        // Count occurrences of each drink
+        for (drink in user_drinks_list) {
+            drinkCountMap[drink] = drinkCountMap.getOrDefault(drink, 0) + 1
+        }
+
+        // Generate the formatted string
+        val formattedList = drinkCountMap.entries.joinToString("\n") { "${it.value}x ${it.key}" }
+
+        return formattedList
+    }
     // Sends the UserData to the ESP32
     fun sendUserData(){
         // Format the data into a JSONObject
