@@ -76,16 +76,22 @@ class CanvasView @JvmOverloads constructor(
             createNameAndLineML(canvas,"Limette", 20, Color.BLACK)
             createNameAndLineML(canvas,"Cachaca", 80, Color.BLACK)
         }
-        if(state == "Spezi"){
+        if(state == "Wasser mit Schuss"){
+            createNameAndLineML(canvas,"Wasser", 150, Color.BLACK)
+            createNameAndLineML(canvas,"Schuss", 75, Color.BLACK)
+        }
+        if(state == "Apfel Hochball"){
+            createNameAndLineML(canvas,"Apfelschnaps", 120, Color.BLACK)
+            createNameAndLineML(canvas,"Cognac", 120, Color.BLACK)
+        }
+        if(state == "Großmutters Spezi"){
             createNameAndLineML(canvas,"Fanta", 120, Color.BLACK)
             createNameAndLineML(canvas,"Cola", 120, Color.BLACK)
         }
-        if(state == "Wasser mit Schuss"){
+        if(state == "Leckeres Kalibrierungsgetränk"){
             createNameAndLine(canvas,"0ml - Kalibrierung", lowestPointInGlas, Color.BLUE)
             createNameAndLine(canvas,"50ml - Kalibrierung", lowestPointInGlas - ml2PixelRatio*50, Color.BLUE)
             createNameAndLine(canvas,"100ml - Kalibrierung", lowestPointInGlas - ml2PixelRatio*100, Color.BLUE)
-            createNameAndLineML(canvas,"Wasser", 150, Color.BLACK)
-            createNameAndLineML(canvas,"Schuss", 100, Color.BLACK)
         }
     }
 

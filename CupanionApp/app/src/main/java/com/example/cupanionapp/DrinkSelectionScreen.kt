@@ -50,5 +50,17 @@ class DrinkSelectionScreen : Fragment() {
             userDataViewModel.updateCurrentDrink("Wasser mit Schuss")
             findNavController().navigate(R.id.action_toFillingQuantityScreen)
         }
+        binding.buttonApfelHochball.setOnClickListener {
+            userDataViewModel.updateCurrentDrink("Apfel Hochball")
+            findNavController().navigate(R.id.action_toFillingQuantityScreen)
+        }
+        binding.buttonGrossmuttersSpezi.setOnClickListener {
+            userDataViewModel.updateCurrentDrink("Großmutters Spezi")
+            findNavController().navigate(R.id.action_toFillingQuantityScreen)
+        }
+        binding.buttonLeckeresKalibrierungsgetraenk.setOnClickListener {
+            userDataViewModel.updateCurrentDrink("Leckeres Kalibrierungsgetränk")
+            findNavController().navigate(R.id.action_toFillingQuantityScreen)
+        }
     }
 }
