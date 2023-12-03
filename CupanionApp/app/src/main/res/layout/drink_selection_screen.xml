@@ -8,68 +8,95 @@
     tools:context=".DrinkSelectionScreen">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp">
+        android:padding="32dp"
+        app:layout_anchor="@+id/constraintLayout2"
+        app:layout_anchorGravity="center">
 
-        <!-- Spezi mit Schuss Button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/buttonSpeziSchuss"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Spezi mit Schuss"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:onClick="onDrinkButtonClick" />
+    <!-- Spezi mit Schuss Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonSpeziSchuss"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:onClick="onDrinkButtonClick"
+        android:textSize="18sp"
+        android:text="Spezi mit Schuss"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp" />
 
-        <!-- Calpirinha Button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/buttonCaipirinha"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Caipirinha"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buttonSpeziSchuss"
-            android:onClick="onDrinkButtonClick" />
+    <!-- Calpirinha Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonCaipirinha"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:onClick="onDrinkButtonClick"
+        android:textSize="18sp"
+        android:text="Caipirinha"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonSpeziSchuss"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp" />
 
-        <!-- Wasser mit Schuss Button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/buttonWasserSchuss"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Wasser mit Schuss"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buttonCaipirinha"
-            android:onClick="onDrinkButtonClick" />
+    <!-- Wasser mit Schuss Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonWasserSchuss"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:onClick="onDrinkButtonClick"
+        android:textSize="18sp"
+        android:text="Wasser mit Schuss"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonCaipirinha"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp" />
 
-        <!-- Apfel Hochball Button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/buttonApfelHochball"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Apfel Hochball"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buttonWasserSchuss"
-            android:onClick="onDrinkButtonClick" />
+    <!-- Apfel Hochball Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonApfelHochball"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:onClick="onDrinkButtonClick"
+        android:textSize="18sp"
+        android:text="Apfel Hochball"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonWasserSchuss"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp" />
 
-        <!-- Großmutters Spezi Button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/buttonGrossmuttersSpezi"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Großmutters Spezi"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buttonApfelHochball"
-            android:onClick="onDrinkButtonClick" />
+    <!-- Großmutters Spezi Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonGrossmuttersSpezi"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:onClick="onDrinkButtonClick"
+        android:textSize="18sp"
+        android:text="Großmutters Spezi"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonApfelHochball"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp" />
 
-        <!-- Wirklich leckeres Kalibrierungsgetränk Button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/buttonLeckeresKalibrierungsgetraenk"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Leckeres Kalibrierungsgetränk"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buttonGrossmuttersSpezi"
-            android:onClick="onDrinkButtonClick" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <!-- Wirklich leckeres Kalibrierungsgetränk Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonLeckeresKalibrierungsgetraenk"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:onClick="onDrinkButtonClick"
+        android:textSize="18sp"
+        android:text="Leckeres Kalibrierungsgetränk"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonGrossmuttersSpezi"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
