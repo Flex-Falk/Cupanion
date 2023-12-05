@@ -1,5 +1,6 @@
 package com.example.cupanionapp
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -92,28 +93,31 @@ class UserData : ViewModel() {
     }
 
     // Sends the UserData to the ESP32
-    fun sendUserData(){
-        // Format the data into a JSONObject
-        val userdata_for_esp = JSONObject()
-        userdata_for_esp.put("user_name", user_name)
-        userdata_for_esp.put("user_goal", user_goal)
-        userdata_for_esp.put("user_current_drink", user_current_drink)
-        userdata_for_esp.put("user_drinks_number", user_drinks_number)
-        userdata_for_esp.put("user_drinks_list", user_drinks_list_formatted)
-        userdata_for_esp.put("user_drive", user_drive)
+    fun sendUserData() {
+        val userdataForESP = JSONObject().apply {
+            put("user_name", user_name)
+            put("user_goal", user_goal)
+            put("user_current_drink", user_current_drink)
+            put("user_drinks_number", user_drinks_number)
+            put("user_drinks_list", user_drinks_list_formatted)
+            put("user_drive", user_drive)
+        }
 
-        // Send data via HTTP POST using Fast Android Networking
         post("http://192.168.4.1/post")
-            .addJSONObjectBody(userdata_for_esp)
-            .addHeaders("Content-Type", "application/json")
+            .addJSONObjectBody(userdataForESP)
+            .setContentType("application/json")
             .setPriority(Priority.MEDIUM)
             .build()
             .getAsJSONObject(object : JSONObjectRequestListener {
-                override fun onResponse(response: JSONObject) {}
-                override fun onError(anError: ANError) {}
+                override fun onResponse(response: JSONObject) {
+                    Log.d("UserData", "Sent UserData")
+                }
+
+                override fun onError(anError: ANError) {
+                    Log.e("UserData", "Error sending UserData: $anError")
+                }
             })
     }
-
     // Function to update the toast value gotten from the ESP32
     // This will probably be implemented through a HTTP Get Request similar to the sendUserData() function, but backwards
     fun updateToastValue(){

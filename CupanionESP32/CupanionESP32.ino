@@ -47,6 +47,9 @@ bool nfc_event_occured = false;
 
 // Handles HTTP "/post" requests from the Android device
 void handlePost() {
+    Serial.println("Received a POST request...");
+    server.send(200, "text/plain", "POST request received successfully");
+    Serial.print("check");
 
   if (server.hasArg("plain")) {
     // Deserialize the raw received JSON string into the JSON document
@@ -75,13 +78,15 @@ void handlePost() {
     // Print the received UserData
     printUserData();
 
-    // if there is new data for the screen, update the "last known" variables and then the display
+    //if there is new data for the screen, update the "last known" variables and then the display
     if (strcmp(received_UserData.user_current_drink, received_UserData.user_last_known_drink) != 0 || strcmp(received_UserData.user_name, received_UserData.user_last_known_name) != 0){
       strlcpy(received_UserData.user_last_known_name, received_UserData.user_name, sizeof(received_UserData.user_last_known_name));
       strlcpy(received_UserData.user_last_known_drink, received_UserData.user_current_drink, sizeof(received_UserData.user_last_known_drink));
-      normalDisplayUpdate();
+      //normalDisplayUpdate();
     }
-  }
+    } else {
+        server.send(400, "text/plain", "Bad Request");
+    }
 }
 
 // Printing the received UserData to the Serial Monitor in a readable format
@@ -117,10 +122,10 @@ void setupServer() {
   WiFi.softAP("ESP32"); // name of the WIFI Network
   server.on("/post", HTTP_POST, handlePost); // how to handle "/post" HTTP requests
   server.begin(); // starts the server
-
+  
   // Print the ESP32's IP address once to Serial Monitor
-  // Serial.println(WiFi.softAPIP());
-}
+  Serial.print("Server is listening for incoming connections under the following IP-Adress: ");
+  Serial.println(WiFi.softAPIP().toString() + "\n");}
 
 /*Graphics Stuff ----------------------------------------------------------------*/
 
@@ -184,19 +189,25 @@ void NFCDisplayUpdate (){
 void setup(){   
   Serial.begin(115200); // Baud Rate of the Serial Monitor
 
-  setupServer(); //setup the server
-
   // initiliazing the e-ink-display
-  DEV_Module_Init();
-  EPD_4IN2_Init_Fast();
-  EPD_4IN2_Clear();
+  Serial.println("ESP32 server is starting...");
+  setupServer(); //setup the server
+  
+  DEV_Delay_ms(1000);
 
-  // Allocating memory for the image to be displayed
+  Serial.println("E-paper display initialization starts");
+
+  //EPD_4IN2_Init_Fast();
+  //EPD_4IN2_Clear();
+
+  //Allocating memory for the image to be displayed
   UWORD Imagesize = ((EPD_4IN2_WIDTH % 8 == 0) ? (EPD_4IN2_WIDTH / 8 ) : (EPD_4IN2_WIDTH / 8 + 1)) * EPD_4IN2_HEIGHT;
   DisplayImage = (UBYTE *)malloc(Imagesize);
 
   // First display update
-  normalDisplayUpdate();
+  //normalDisplayUpdate();
+
+  Serial.println("E-paper display initialization finished");
 }
 
 /* The main loop -------------------------------------------------------------*/
