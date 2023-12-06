@@ -59,6 +59,11 @@ class UserData : ViewModel() {
         _userData.value = this
     }
 
+    // returns true if a user drunk an drink of alcoholicBeverages list
+    fun isDrivingAbilityRestricted(alcoholicBeverages: MutableList<String>, userDrinksList: MutableList<String>): Boolean{
+        return userDrinksList.any { element -> alcoholicBeverages.contains(element) }
+    }
+
     // Function for what happens when the mixing of a drink is concluded
     fun finishedMixing(){
         // Append a new drink to the drink list.
@@ -73,8 +78,10 @@ class UserData : ViewModel() {
         // Update the drink number
         user_drinks_number = user_drinks_list.size
 
+        //list of alcoholic beverages
+        val alcoholicBeverages: MutableList<String> = mutableListOf("Spezi mit Schuss", "Caipirinha", "Wasser mit Schuss", "Apfel Hochball")
         // Update if the user should drive or not.
-        if (user_drinks_number != 0) {
+        if (isDrivingAbilityRestricted(alcoholicBeverages, user_drinks_list)) {
             user_drive = false
         }
     }

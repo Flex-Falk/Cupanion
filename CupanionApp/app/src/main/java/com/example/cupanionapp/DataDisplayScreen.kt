@@ -1,11 +1,13 @@
 package com.example.cupanionapp
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.cupanionapp.databinding.DataDisplayScreenBinding
@@ -50,9 +52,12 @@ class DataDisplayScreen : Fragment() {
 
         // Display if the user should drive or not.
         if(userDataViewModel.user_drive == false){
-            binding.textViewUserDrive.text = "Fahrtüchtigkeit: Nicht mehr in Ordnung"
+            binding.textViewUserDrive.text = "Fahrtüchtigkeit: "
+            binding.textViewUserDrive2.text = "nicht i.O."
+            binding.textViewUserDrive2.setTextColor(Color.RED)
         } else{
-            binding.textViewUserDrive.text = "Fahrtüchtigkeit: In Ordnung"
+            binding.textViewUserDrive.text = "Fahrtüchtigkeit: "
+            binding.textViewUserDrive2.text = "In Ordnung"
         }
 
         // Display what drinks the user has drunk.
@@ -60,6 +65,11 @@ class DataDisplayScreen : Fragment() {
             binding.textViewUserDrinksList.text = "Getrunkene Getränke:${userDataViewModel.user_drinks_list_formatted}"
         } else {
             binding.textViewUserDrinksList.text ="Bisherige Getränke: noch keine"
+        }
+
+        // Toast when user has reached given target
+        if(userDataViewModel.user_drinks_number!! >= userDataViewModel.user_goal!!){
+            Toast.makeText(requireContext(), "Trinkziel erreicht!", Toast.LENGTH_LONG).show()
         }
 
         binding.buttonToDrinkSelectionScreen.setOnClickListener {
