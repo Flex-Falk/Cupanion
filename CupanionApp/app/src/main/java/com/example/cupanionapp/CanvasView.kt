@@ -88,7 +88,7 @@ class CanvasView @JvmOverloads constructor(
             createNameAndLineML(canvas,"Fanta", 120, Color.BLACK)
             createNameAndLineML(canvas,"Cola", 120, Color.BLACK)
         }
-        if(state == "Leckeres Kalibrierungsgetränk"){
+        if(state == "Leckeres Kalibrierungs-Drink"){
             createNameAndLine(canvas,"0ml - Kalibrierung", lowestPointInGlas, Color.BLUE)
             createNameAndLine(canvas,"50ml - Kalibrierung", lowestPointInGlas - ml2PixelRatio*50, Color.BLUE)
             createNameAndLine(canvas,"100ml - Kalibrierung", lowestPointInGlas - ml2PixelRatio*100, Color.BLUE)

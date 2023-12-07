@@ -59,7 +59,7 @@ class DrinkSelectionScreen : Fragment() {
             findNavController().navigate(R.id.action_toFillingQuantityScreen)
         }
         binding.buttonLeckeresKalibrierungsgetraenk.setOnClickListener {
-            userDataViewModel.updateCurrentDrink("Leckeres Kalibrierungsgetränk")
+            userDataViewModel.updateCurrentDrink("Leckeres Kalibrierungs-Drink")
             findNavController().navigate(R.id.action_toFillingQuantityScreen)
         }
     }
