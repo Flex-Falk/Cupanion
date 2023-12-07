@@ -18,19 +18,19 @@ class UserData : ViewModel() {
     val userData: LiveData<UserData> get() = _userData
 
     // This represents the username.
-    var user_name: String? = null
+    var user_name: String? = ""
 
     // This represents the drinking goal.
-    var user_goal: Int? = null
+    var user_goal: Int? = 0
 
     // This represents the drink which is currently being mixed.
-    var user_current_drink: String? = null
+    var user_current_drink: String? = ""
 
     // This list represents the drinks the user has mixed in raw form.
     var user_drinks_list: MutableList<String> = mutableListOf()
 
     // This list represents the drinks the user has mixed in a printable String form.
-    var user_drinks_list_formatted: String? = null
+    var user_drinks_list_formatted: String? = ""
 
     // This represents the amount of drinks the user has mixed.
     var user_drinks_number: Int? = 0

@@ -9,18 +9,23 @@
 
 // Constants for memory sizes for some variables, adjust accordingly if not enough
 #define user_name_size 50
+#define user_last_known_name_size 50
+#define user_last_known_drink_size 50
 #define user_current_drink_size 50
 #define user_drinks_list_size 200
 #define json_struct_size 1024
 
 // Struct for the UserData
 struct UserData {
-  char user_name[user_name_size] = "[noch nicht vergeben]";
+  char user_name[user_name_size] = "";
   int user_goal = 0;
-  char user_current_drink[user_current_drink_size] = "[kein Getraenk ausgewaehlt]";
-  char user_drinks_list[user_drinks_list_size] = "[noch keine Getraenke getrunken]";
+  char user_current_drink[user_current_drink_size] = "";
+  char user_drinks_list[user_drinks_list_size] = "";
   int user_drinks_number = 0;
   bool user_drive = true;
+
+  char user_last_known_name[user_last_known_name_size] = "";
+  char user_last_known_drink[user_last_known_drink_size] = "";
 };
 
 // How many peopole the user toasted
@@ -33,15 +38,17 @@ WebServer server(80);
 UserData received_UserData;
 
 // Allocated memory for the image to be displayed
-UBYTE *BlackImage;
+UBYTE *DisplayImage;
 
-// Current slideshow index
-int slideshowIndex = 0;
+// Checks if an NFC Event has been triggered
+bool nfc_event_occured = false;
 
 /*Networking Stuff ----------------------------------------------------------------*/
 
 // Handles HTTP "/post" requests from the Android device
 void handlePost() {
+    Serial.println("Received a POST request...");
+    server.send(200, "text/plain", "POST request received successfully");
 
   if (server.hasArg("plain")) {
     // Deserialize the raw received JSON string into the JSON document
@@ -60,17 +67,25 @@ void handlePost() {
     }
 
     // Populate the received_UserData struct
-    strlcpy(received_UserData.user_name, dynamic_json["user_name"] | "[noch nicht vergeben]", sizeof(received_UserData.user_name));
+    strlcpy(received_UserData.user_name, dynamic_json["user_name"] | "", sizeof(received_UserData.user_name));
     received_UserData.user_goal = dynamic_json["user_goal"] | 0;
-    strlcpy(received_UserData.user_current_drink, dynamic_json["user_current_drink"] | "[kein Getraenk ausgewaehlt]", sizeof(received_UserData.user_current_drink));
-    strlcpy(received_UserData.user_drinks_list, dynamic_json["user_drinks_list"] | "[noch keine Getraenke getrunken]", sizeof(received_UserData.user_drinks_list));
+    strlcpy(received_UserData.user_current_drink, dynamic_json["user_current_drink"] | "", sizeof(received_UserData.user_current_drink));
+    strlcpy(received_UserData.user_drinks_list, dynamic_json["user_drinks_list"] | "", sizeof(received_UserData.user_drinks_list));
     received_UserData.user_drinks_number = dynamic_json["user_drinks_number"] | 0;
     received_UserData.user_drive = dynamic_json["user_drive"] | true;
-    received_UserData.user_goal = dynamic_json["user_goal"] | 0;
 
     // Print the received UserData
     printUserData();
-  }
+
+    //if there is new data for the screen, update the "last known" variables and then the display
+    if (strcmp(received_UserData.user_current_drink, received_UserData.user_last_known_drink) != 0 || strcmp(received_UserData.user_name, received_UserData.user_last_known_name) != 0){
+      strlcpy(received_UserData.user_last_known_name, received_UserData.user_name, sizeof(received_UserData.user_last_known_name));
+      strlcpy(received_UserData.user_last_known_drink, received_UserData.user_current_drink, sizeof(received_UserData.user_last_known_drink));
+      normalDisplayUpdate(DisplayImage);
+    }
+    } else {
+        server.send(400, "text/plain", "Bad Request");
+    }
 }
 
 // Printing the received UserData to the Serial Monitor in a readable format
@@ -108,111 +123,97 @@ void setupServer() {
   server.begin(); // starts the server
 
   // Print the ESP32's IP address once to Serial Monitor
-  // Serial.println(WiFi.softAPIP());
+  Serial.print("Server is listening for incoming connections under the following IP-Adress: ");
+  Serial.println(WiFi.softAPIP().toString() + "\n");
 }
 
 /*Graphics Stuff ----------------------------------------------------------------*/
-// increases or resets the slideshowIndex accordingly
-void updateSlideshowIndex(){
-  if (slideshowIndex == 5){ // end of slideshow reached, reset
-    slideshowIndex = 0;
-  } else{                   // next slideshow
-    slideshowIndex++;
-  }
-}
 
 // Function to display UserData on the e-ink display
-void displayUserData(UBYTE *image) {
+void normalDisplayUpdate(UBYTE *image) {
 
-  // reset the screen (paint it black, etc.)
+  // reset the screen (paint it white, etc.)
   EPD_4IN2_Clear();
-  Paint_NewImage(BlackImage, EPD_4IN2_WIDTH, EPD_4IN2_HEIGHT, 270, BLACK);
+  Paint_NewImage(DisplayImage, EPD_4IN2_WIDTH, EPD_4IN2_HEIGHT, 270, WHITE);
   Paint_SelectImage(image);
-  Paint_Clear(BLACK);
+  Paint_Clear(WHITE);
 
-  // select the current slide to display and do so
-  if (slideshowIndex == 0){
-    Paint_DrawString_EN(10, 50, "Name: ", &Font24, BLACK, WHITE);
-    Paint_DrawString_EN(10, 100, received_UserData.user_name, &Font24, BLACK, WHITE);
+  Paint_DrawString_EN(10, 50, "Hey, mein Name ist ", &Font24, WHITE, BLACK);
+  Paint_DrawString_EN(10, 100, received_UserData.user_name, &Font24, WHITE, BLACK);
 
-  } else if (slideshowIndex == 1){
-    // Convert int to char before drawing
-    char toasts_str[10];
-    itoa(user_toasts, toasts_str, 10);
-    Paint_DrawString_EN(10, 50, "Mit Leuten angestossen: ", &Font24, BLACK, WHITE);
-    Paint_DrawString_EN(10, 100, toasts_str, &Font24, BLACK, WHITE);
-
-  } else if (slideshowIndex == 2){
-    // Convert ints to chars before drawing
-    char drinks_number_str[10];
-    char goal_str[10];
-    itoa(received_UserData.user_drinks_number, drinks_number_str, 10);
-    itoa(received_UserData.user_goal, goal_str, 10);
-
-    char progress_str[20];
-    strcat(progress_str, drinks_number_str);
-    strcat(progress_str, " / ");
-    strcat(progress_str, goal_str);
-
-    Paint_DrawString_EN(10, 50, "Trinkfortschritt: ", &Font24, BLACK, WHITE);
-    Paint_DrawString_EN(10, 100, progress_str, &Font24, BLACK, WHITE);
-  
-  } else if (slideshowIndex == 3){
-    Paint_DrawString_EN(10, 50, "Fahrtuechtigkeit: ", &Font24, BLACK, WHITE);
-    if(received_UserData.user_drive == true){
-      Paint_DrawString_EN(10, 100, "In Ordnung", &Font24, BLACK, WHITE);
-    } else{
-      Paint_DrawString_EN(10, 100, "Nicht mehr in Ordnung", &Font24, BLACK, WHITE);
-    }
-  } else if (slideshowIndex == 4){
-    Paint_DrawString_EN(10, 50, "Aktuelles Getraenk: ", &Font24, BLACK, WHITE);
-    Paint_DrawString_EN(10, 100, received_UserData.user_current_drink, &Font24, BLACK, WHITE);
-  
-  } else{
-    Paint_DrawString_EN(10, 50, "Bisherige Getraenke: ", &Font24, BLACK, WHITE);
-    Paint_DrawString_EN(10, 100, received_UserData.user_drinks_list, &Font24, BLACK, WHITE);
-  }  
+  Paint_DrawString_EN(10, 200, "In meinem Glas befindet sich aktuell ", &Font24, WHITE, BLACK);
+  Paint_DrawString_EN(10, 300, received_UserData.user_current_drink, &Font24, WHITE, BLACK);
   
   EPD_4IN2_Display(image);
+}
+
+// the special display update when an NFC event happened, displays more user data
+void NFCDisplayUpdate (UBYTE *image){
+  // reset the screen (paint it white, etc.)
+  EPD_4IN2_Clear();
+  Paint_NewImage(DisplayImage, EPD_4IN2_WIDTH, EPD_4IN2_HEIGHT, 270, WHITE);
+  Paint_SelectImage(image);
+  Paint_Clear(WHITE);
+
+  char toasts_str[10];
+  itoa(user_toasts, toasts_str, 10);
+  Paint_DrawString_EN(10, 50, "Ich habe schon mit Leuten angestossen: ", &Font12, WHITE, BLACK);
+  Paint_DrawString_EN(10, 100, toasts_str, &Font12, WHITE, BLACK);
+
+  char drinks_number_str[10];
+  char goal_str[10];
+  itoa(received_UserData.user_drinks_number, drinks_number_str, 10);
+  itoa(received_UserData.user_goal, goal_str, 10);
+
+  char progress_str[20];
+  strcat(progress_str, drinks_number_str);
+  strcat(progress_str, " / ");
+  strcat(progress_str, goal_str);
+
+  Paint_DrawString_EN(10, 150, "Das ist mein bisheriger Trinkfortschritt: ", &Font12, WHITE, BLACK);
+  Paint_DrawString_EN(10, 200, progress_str, &Font12, WHITE, BLACK);
+
+  Paint_DrawString_EN(10, 250, "Meine bisherigen Getraenke sind ", &Font12, WHITE, BLACK);
+  Paint_DrawString_EN(10, 300, received_UserData.user_drinks_list, &Font12, WHITE, BLACK);
+
+  Paint_DrawString_EN(10, 400, "Schoen dich kennenzulernen!", &Font12, WHITE, BLACK);
+
+  delay(7500);
+
+  EPD_4IN2_Display(DisplayImage);
 }
 
 /* Entry point ----------------------------------------------------------------*/
 void setup(){   
   Serial.begin(115200); // Baud Rate of the Serial Monitor
 
+  // initiliazing the e-ink-display
+  Serial.println("ESP32 server is starting...");
   setupServer(); //setup the server
 
   // initiliazing the e-ink-display
+  Serial.println("E-paper display initialization starts");
   DEV_Module_Init();
   EPD_4IN2_Init_Fast();
   EPD_4IN2_Clear();
 
   // Allocating memory for the image to be displayed
   UWORD Imagesize = ((EPD_4IN2_WIDTH % 8 == 0) ? (EPD_4IN2_WIDTH / 8 ) : (EPD_4IN2_WIDTH / 8 + 1)) * EPD_4IN2_HEIGHT;
-  BlackImage = (UBYTE *)malloc(Imagesize);
+  DisplayImage = (UBYTE *)malloc(Imagesize);
+
+  normalDisplayUpdate(DisplayImage);
+
+  Serial.println("E-paper display initialization finished");
 }
-
-// a constant for the delay between slides in milliseconds
-const unsigned long delayBetweenSlides = 7500;  // 7,5 seconds
-
-// Variable to keep track of the last time the display was updated
-unsigned long lastUpdateTime = 0;
 
 /* The main loop -------------------------------------------------------------*/
 void loop() {
-  // Handling further interaction with the server
-  server.handleClient();
-  
-  // Check if enough time has passed since the last update
-  unsigned long currentTime = millis();
-  if (currentTime - lastUpdateTime >= delayBetweenSlides) {
-    // Display the UserData at the current index in the slideshow  
-    displayUserData(BlackImage);
-
-    // Prepare for the next slide
-    updateSlideshowIndex();
-
-    // Update the last update time
-    lastUpdateTime = currentTime;
+  // NFC events should alwyays have the higher relevance than other stuff
+  if (nfc_event_occured == true){
+    NFCDisplayUpdate(DisplayImage);
+    nfc_event_occured = false;
+  } else {
+    // Handling further interaction with the server
+    server.handleClient();
   }
 }
