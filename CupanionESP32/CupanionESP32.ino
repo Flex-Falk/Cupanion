@@ -1,6 +1,7 @@
 #include "DEV_Config.h"
 #include "EPD.h"
 #include "GUI_Paint.h"
+#include "imagedata.h"
 
 #include <stdlib.h>
 #include <WiFi.h>
@@ -129,6 +130,38 @@ void setupServer() {
 
 /*Graphics Stuff ----------------------------------------------------------------*/
 
+void padAndTruncateString(char* input, char* result, int totalLength) {
+    int inputLength = strlen(input);
+
+    if (inputLength > totalLength) {
+        // If the input is longer than the total length, truncate it
+        strncpy(result, input, totalLength);
+        result[totalLength] = '\0';
+    } else {
+        // Calculate the number of spaces to add on both sides
+        int spacesToAdd = (totalLength - inputLength) / 2;
+
+        // Create a temporary buffer to store the padded string
+        char paddedString[totalLength + 1];
+
+        // Fill the buffer with spaces on the left
+        memset(paddedString, ' ', spacesToAdd);
+        paddedString[spacesToAdd] = '\0';
+
+        // Concatenate the original string
+        strcat(paddedString, input);
+
+        // Add spaces on the right if needed
+        int remainingSpaces = totalLength - strlen(paddedString);
+        if (remainingSpaces > 0) {
+            strcat(paddedString, " ");
+        }
+
+        // Copy the result back to the destination string
+        strcpy(result, paddedString);
+    }
+}
+
 // Function to display UserData on the e-ink display
 void normalDisplayUpdate(UBYTE *image) {
 
@@ -138,12 +171,25 @@ void normalDisplayUpdate(UBYTE *image) {
   Paint_SelectImage(image);
   Paint_Clear(WHITE);
 
-  Paint_DrawString_EN(10, 50, "Hey, mein Name ist ", &Font24, WHITE, BLACK);
-  Paint_DrawString_EN(10, 100, received_UserData.user_name, &Font24, WHITE, BLACK);
+  Paint_DrawString_EN(100, 40, "Hallo!", &Font24, WHITE, BLACK);
 
-  Paint_DrawString_EN(10, 200, "In meinem Glas befindet sich aktuell ", &Font24, WHITE, BLACK);
-  Paint_DrawString_EN(10, 300, received_UserData.user_current_drink, &Font24, WHITE, BLACK);
+  char optimized_user_name[18] = "";
+  char optimized_current_drink[18] = "";
+
+  padAndTruncateString(received_UserData.user_name, optimized_user_name, 17);
+  padAndTruncateString(received_UserData.user_current_drink, optimized_current_drink, 17);
+
+  Paint_DrawString_EN(30, 100, "Mein Name ist:", &Font24, WHITE, BLACK);
+  Paint_DrawString_EN(10, 130, optimized_user_name, &Font24, WHITE, BLACK);
   
+  Paint_DrawString_EN(30, 190, "In meinem Glas", &Font24, WHITE, BLACK);
+  Paint_DrawString_EN(32, 220, "befindet sich:", &Font24, WHITE, BLACK);
+  
+  Paint_DrawString_EN(10, 250, optimized_current_drink, &Font24, WHITE, BLACK);
+
+  Paint_DrawString_EN(80, 300, "Lass uns", &Font24, WHITE, BLACK);
+  Paint_DrawString_EN(70, 330, "anstossen!", &Font24, WHITE, BLACK);
+
   EPD_4IN2_Display(image);
 }
 
@@ -157,26 +203,24 @@ void NFCDisplayUpdate (UBYTE *image){
 
   char toasts_str[10];
   itoa(user_toasts, toasts_str, 10);
-  Paint_DrawString_EN(10, 50, "Ich habe schon mit Leuten angestossen: ", &Font12, WHITE, BLACK);
-  Paint_DrawString_EN(10, 100, toasts_str, &Font12, WHITE, BLACK);
+  Paint_DrawString_EN(10, 50, "Ich habe schon so", &Font24, WHITE, BLACK);
+  Paint_DrawString_EN(15, 80, "oft angestossen:", &Font24, WHITE, BLACK);
+  Paint_DrawString_EN(145, 110, toasts_str, &Font24, WHITE, BLACK);
 
   char drinks_number_str[10];
   char goal_str[10];
   itoa(received_UserData.user_drinks_number, drinks_number_str, 10);
   itoa(received_UserData.user_goal, goal_str, 10);
 
-  char progress_str[20];
-  strcat(progress_str, drinks_number_str);
-  strcat(progress_str, " / ");
-  strcat(progress_str, goal_str);
+  Paint_DrawString_EN(20, 170, "Mein bisheriger", &Font24, WHITE, BLACK);
+  Paint_DrawString_EN(10, 200, "Trinkfortschritt:", &Font24, WHITE, BLACK);
+  
+  Paint_DrawString_EN(110, 230, drinks_number_str, &Font24, WHITE, BLACK);
+  Paint_DrawString_EN(150, 230, "/", &Font24, WHITE, BLACK);
+  Paint_DrawString_EN(185, 230, goal_str, &Font24, WHITE, BLACK);
 
-  Paint_DrawString_EN(10, 150, "Das ist mein bisheriger Trinkfortschritt: ", &Font12, WHITE, BLACK);
-  Paint_DrawString_EN(10, 200, progress_str, &Font12, WHITE, BLACK);
-
-  Paint_DrawString_EN(10, 250, "Meine bisherigen Getraenke sind ", &Font12, WHITE, BLACK);
-  Paint_DrawString_EN(10, 300, received_UserData.user_drinks_list, &Font12, WHITE, BLACK);
-
-  Paint_DrawString_EN(10, 400, "Schoen dich kennenzulernen!", &Font12, WHITE, BLACK);
+  Paint_DrawString_EN(45, 300, "Schoen dich", &Font24, WHITE, BLACK);
+  Paint_DrawString_EN(25, 330, "kennenzulernen!", &Font24, WHITE, BLACK);
 
   delay(7500);
 
@@ -201,9 +245,13 @@ void setup(){
   UWORD Imagesize = ((EPD_4IN2_WIDTH % 8 == 0) ? (EPD_4IN2_WIDTH / 8 ) : (EPD_4IN2_WIDTH / 8 + 1)) * EPD_4IN2_HEIGHT;
   DisplayImage = (UBYTE *)malloc(Imagesize);
 
-  normalDisplayUpdate(DisplayImage);
 
-  Serial.println("E-paper display initialization finished");
+  Serial.print("E-paper display has been initialized with the following width and height: ");
+  Serial.print (EPD_4IN2_WIDTH);
+  Serial.print (" ");
+  Serial.print (EPD_4IN2_HEIGHT);
+
+  normalDisplayUpdate(DisplayImage);
 }
 
 /* The main loop -------------------------------------------------------------*/
