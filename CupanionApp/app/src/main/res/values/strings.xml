@@ -4,7 +4,7 @@
 
     <!-- Strings used for fragments for navigation -->
 
-    <string name="DataInputScreen">Bitte gib deine Nutzerdaten ein.</string>
+    <string name="DataInputScreen">Was macht dich aus?</string>
     <string name="DataDisplayScreen">Deine Statistiken</string>
     <string name="DrinkSelectionScreen">Wähle ein Getränk</string>
     <string name="FillingQuantityScreen">Mixing-Time!</string>

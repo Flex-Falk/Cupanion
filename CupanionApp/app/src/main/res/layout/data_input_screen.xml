@@ -43,7 +43,7 @@
                 android:id="@+id/editTextUserGoal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Getränkeziel"
+                android:hint="Heutiges Getränkeziel"
                 android:inputType="number"/>
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -55,7 +55,7 @@
             android:layout_marginBottom="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@android:drawable/ic_input_add" />
+            app:srcCompat="@drawable/baseline_save_24" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
