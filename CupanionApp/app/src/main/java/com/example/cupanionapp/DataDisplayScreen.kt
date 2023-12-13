@@ -72,6 +72,10 @@ class DataDisplayScreen : Fragment() {
             Toast.makeText(requireContext(), "Trinkziel erreicht!", Toast.LENGTH_LONG).show()
         }
 
+        if(userDataViewModel.user_drinks_number!! > userDataViewModel.user_goal!!){
+            Toast.makeText(requireContext(), "Trinkziel überschritten!", Toast.LENGTH_LONG).show()
+        }
+
         binding.buttonToDrinkSelectionScreen.setOnClickListener {
             findNavController().navigate(R.id.action_toDrinkSelectionScreen)
         }
