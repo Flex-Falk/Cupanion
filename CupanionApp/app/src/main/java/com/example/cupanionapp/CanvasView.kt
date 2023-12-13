@@ -21,9 +21,9 @@ class CanvasView @JvmOverloads constructor(
     private var state: String? = null
 
     //measured height when filling 0 ml
-    private val lowestPointInGlas = 1570f
+    private val lowestPointInGlass = 1570f
 
-    private var latestIngredientFillingHeight = lowestPointInGlas
+    private var latestIngredientFillingHeight = lowestPointInGlass
 
     // 50ml at 970px, 100ml at 1270px -> (1270px-970px)/(100ml-50ml)
     private val posOf100ml = 1270
@@ -61,6 +61,19 @@ class CanvasView @JvmOverloads constructor(
         canvas?.drawLine(0f,heightWhenAdding,2000f,heightWhenAdding, paint)
     }
 
+    // Function to draw a glass indication rectangle and its description.
+    private fun drawGlassOutlines(canvas: Canvas?, inputColor: Int){
+        val paintRect = Paint()
+        paintRect.color = inputColor
+        val paintText = Paint()
+        paintText.strokeWidth = 10f
+        paintText.textSize = 100f
+        paintText.color = Color.DKGRAY
+
+        canvas?.drawRect(0f,lowestPointInGlass,2000f,lowestPointInGlass+1000f,paintRect)
+        canvas?.drawText("Glasboden", 0f,lowestPointInGlass+120, paintText)
+    }
+
     // Function which determines which drink is shown on our filling_quantity_screen.
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
@@ -69,29 +82,34 @@ class CanvasView @JvmOverloads constructor(
             createNameAndLineML(canvas,"Rum", 30, Color.BLACK)
             createNameAndLineML(canvas,"Fanta", 100, Color.BLACK)
             createNameAndLineML(canvas,"Cola", 100, Color.BLACK)
+            drawGlassOutlines(canvas, Color.LTGRAY)
         }
         if(state == "Caipirinha"){
             createNameAndLineML(canvas,"Rohrzucker", 20, Color.BLACK)
             createNameAndLineML(canvas,"Crushed Ice", 70, Color.BLACK)
             createNameAndLineML(canvas,"Limette", 20, Color.BLACK)
             createNameAndLineML(canvas,"Cachaca", 80, Color.BLACK)
+            drawGlassOutlines(canvas, Color.LTGRAY)
         }
         if(state == "Wasser mit Schuss"){
             createNameAndLineML(canvas,"Wasser", 150, Color.BLACK)
             createNameAndLineML(canvas,"Schuss", 75, Color.BLACK)
+            drawGlassOutlines(canvas, Color.LTGRAY)
         }
         if(state == "Apfel Hochball"){
             createNameAndLineML(canvas,"Apfelschnaps", 120, Color.BLACK)
             createNameAndLineML(canvas,"Cognac", 120, Color.BLACK)
+            drawGlassOutlines(canvas, Color.LTGRAY)
         }
         if(state == "Großmutters Spezi"){
             createNameAndLineML(canvas,"Fanta", 120, Color.BLACK)
             createNameAndLineML(canvas,"Cola", 120, Color.BLACK)
+            drawGlassOutlines(canvas, Color.LTGRAY)
         }
         if(state == "Leckeres Kalibrierungs-Drink"){
-            createNameAndLine(canvas,"0ml - Kalibrierung", lowestPointInGlas, Color.BLUE)
-            createNameAndLine(canvas,"50ml - Kalibrierung", lowestPointInGlas - ml2PixelRatio*50, Color.BLUE)
-            createNameAndLine(canvas,"100ml - Kalibrierung", lowestPointInGlas - ml2PixelRatio*100, Color.BLUE)
+            createNameAndLine(canvas,"0ml - Kalibrierung", lowestPointInGlass, Color.BLUE)
+            createNameAndLine(canvas,"50ml - Kalibrierung", lowestPointInGlass - ml2PixelRatio*50, Color.BLUE)
+            createNameAndLine(canvas,"100ml - Kalibrierung", lowestPointInGlass - ml2PixelRatio*100, Color.BLUE)
         }
     }
 
