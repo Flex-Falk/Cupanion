@@ -8,6 +8,8 @@
 #include <WebServer.h>
 #include <ArduinoJson.h>
 
+#include <Adafruit_PN532.h>
+
 // Constants for memory sizes for some variables, adjust accordingly if not enough
 #define user_name_size 50
 #define user_last_known_name_size 50
@@ -15,6 +17,9 @@
 #define user_current_drink_size 50
 #define user_drinks_list_size 200
 #define json_struct_size 1024
+
+#define PN532_IRQ   (2)
+#define PN532_RESET (3) 
 
 // Struct for the UserData
 struct UserData {
@@ -28,6 +33,9 @@ struct UserData {
   char user_last_known_name[user_last_known_name_size] = "";
   char user_last_known_drink[user_last_known_drink_size] = "";
 };
+
+//Create nfc object and initialise communication to the reader with I2C protocol
+Adafruit_PN532 nfc(PN532_IRQ, PN532_RESET);
 
 // How many peopole the user toasted
 int user_toasts = 0;
@@ -44,7 +52,128 @@ UBYTE *DisplayImage;
 // Checks if an NFC Event has been triggered
 bool nfc_event_occured = false;
 
+char nameFromTag[50];
+
+/*NFC Stuff ----------------------------------------------------------------*/
+
+void nfc_init(){
+  Serial.println("Starting NFC Communication");
+  nfc.begin();
+  uint32_t versiondata = nfc.getFirmwareVersion();
+  if (! versiondata) {
+    Serial.print("NFC functionality not available");
+    return;
+  }
+  else{
+    Serial.print("Found chip PN5"); Serial.println((versiondata>>24) & 0xFF, HEX);
+    Serial.print("Firmware ver. "); Serial.print((versiondata>>16) & 0xFF, DEC);
+    Serial.print('.'); Serial.println((versiondata>>8) & 0xFF, DEC);
+    Serial.println("NFC functionality ready");  
+  }
+}
+
+bool checkForNFC_Information(){
+  uint8_t success;
+  uint8_t uid[] = { 0, 0, 0, 0, 0, 0, 0 };
+  uint8_t uidLength;
+  uint8_t data[32];
+  uint8_t complete_data[4*60];
+  
+  success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
+  if(success){
+    if(uidLength == 7){ //uid Length of 7 means the tag is ntag15, ntag13 or ntag16 which are needed  
+      Serial.println("Seems to be an NTAG2xx tag (7 byte UID)");
+      for (uint8_t i = 0; i < 60; i++){
+        success = nfc.ntag2xx_ReadPage(i, data);   //Read 4 Bytes at a time
+        if (success){
+          for(int u=0; u<4;u++){
+            complete_data[(i*4)+u] = data[u];
+          }
+        }
+      }     
+    }else{ 
+      Serial.println("This doesn't seem to be an NTAG203 tag (UUID length != 7 bytes)!"); return false; 
+    }
+
+    char textBuffer[240];
+    char searchWord[] = "VCARD";
+    for(int z=0; z<240; z++){
+      if(complete_data[z] != 0){ textBuffer[z] = complete_data[z]; } //only
+      else{textBuffer[z] = 32; } //If the character in the complete_data is not usable, it is replaced with a new line
+      //Serial.print(textBuffer[z]);
+      //Serial.print(" ");
+    }
+
+    int namebegin = findWord(textBuffer, "FN:", 0, 1);
+    int nameend = findWord(textBuffer, "\n", namebegin, 0);
+    char nameToSend[nameend-namebegin+1];
+    Serial.print("Name from the Tag: ");
+    for(int z=0; z<(nameend-namebegin);z++){
+      Serial.print(textBuffer[namebegin+z]);
+      nameToSend[z] = textBuffer[namebegin+z];
+      nameFromTag[z] = textBuffer[namebegin+z];
+    }
+  
+    Serial.println("");
+    //nfc_event_occured = true;
+  }
+  return true;
+}
+
+//Find the index of the first character of the given word (wordToFind) inside the String (textChar) which contains the NFC Tags entire content
+//If the String contains the searched word multiple times, the function will return the index of the first character of the first found word
+//To access the information behind the first found word, the user can provide a startIndex for the search
+//To find the index of the first character after the searched word, set addWordLen to True
+int findWord(char textChar[], char wordToFind[], int startIndex, bool addWordLen){
+    char* textCharP = textChar;
+    char* wordToFindP = wordToFind;
+    int WordLength = strlen(wordToFindP);
+    //WordLength = WordLength - 1; //Null terminierung nicht vergleichen
+    int TextLength = strlen(textChar);
+    //Serial.print("Text Length:");
+    //Serial.print(TextLength);
+    Serial.println("Extracting name from contact information...");
+    char compareChar[WordLength];
+    
+    for(int i=startIndex; i<(TextLength-WordLength); i++){   
+      for(int c=0; c<WordLength; c++){
+        compareChar[c] = textCharP[i+c];
+        //Serial.print(compareChar[c]);
+      }
+    
+      int wrongWord = 0;
+      for(int w=0; w<WordLength; w++){
+        if(compareChar[w]==wordToFindP[w]){}
+        else{
+          wrongWord = 1;
+        }
+      }
+      
+      if(!wrongWord){
+        if(addWordLen){return i+WordLength;}
+        else{  return i;}
+      }
+       
+    }
+  return -1;
+}
+
 /*Networking Stuff ----------------------------------------------------------------*/
+
+void handle_NFC_getRequest(){
+  
+  DynamicJsonDocument doc(json_struct_size);
+  //doc["name"] = nameFromTag;
+  doc["name"] = "TagName";
+  String postContent = "";
+  serializeJson(doc, postContent);
+
+  //server.sendHeader("Connection", "close");
+  server.sendHeader("Content-Type", "application/json");
+  //server.send(200, "text/html", serverIndex);
+  server.send(200, "application/json", postContent);
+     
+}
 
 // Handles HTTP "/post" requests from the Android device
 void handlePost() {
@@ -93,7 +222,7 @@ void handlePost() {
 void printUserData() {
   Serial.println("Statistiken:");
   Serial.print("Name: ");
-  Serial.println(received_UserData.user_name[0]);
+  Serial.println(received_UserData.user_name);
   Serial.print("Mit Leuten angestoßen: ");
   Serial.println(user_toasts);
   
@@ -121,6 +250,7 @@ void printUserData() {
 void setupServer() {
   WiFi.softAP("ESP32"); // name of the WIFI Network
   server.on("/post", HTTP_POST, handlePost); // how to handle "/post" HTTP requests
+  server.on("/nfc-get", HTTP_GET, handle_NFC_getRequest);  // how to handle "/nfc-get" HTTP requests
   server.begin(); // starts the server
 
   // Print the ESP32's IP address once to Serial Monitor
@@ -231,6 +361,9 @@ void NFCDisplayUpdate (UBYTE *image){
 void setup(){   
   Serial.begin(115200); // Baud Rate of the Serial Monitor
 
+  // initiliazing NFC reader
+  nfc_init();
+
   // initiliazing the e-ink-display
   Serial.println("ESP32 server is starting...");
   setupServer(); //setup the server
@@ -254,8 +387,23 @@ void setup(){
   normalDisplayUpdate(DisplayImage);
 }
 
+// Variable to keep track of the last time the display was updated
+unsigned long lastUpdateTime = 0;
+
 /* The main loop -------------------------------------------------------------*/
 void loop() {
+
+  //Comment out this line for Network functionality
+  //checkForNFC_Information();
+  
+  /*
+  unsigned long currentTime = millis();
+  if (currentTime - lastUpdateTime >= 1000) {
+    // Update the last update time
+    lastUpdateTime = currentTime;
+  }
+  */
+
   // NFC events should alwyays have the higher relevance than other stuff
   if (nfc_event_occured == true){
     NFCDisplayUpdate(DisplayImage);

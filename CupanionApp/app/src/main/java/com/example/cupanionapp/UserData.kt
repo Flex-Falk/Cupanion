@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.androidnetworking.AndroidNetworking.post
+import com.androidnetworking.AndroidNetworking.get
 import com.androidnetworking.common.Priority
 import com.androidnetworking.error.ANError
 import com.androidnetworking.interfaces.JSONObjectRequestListener
@@ -129,6 +130,21 @@ class UserData : ViewModel() {
     // This will probably be implemented through a HTTP Get Request similar to the sendUserData() function, but backwards
     fun updateToastValue(){
         user_toasts = 0
+        var tagName = "name"
+
+        get("http://192.168.4.1/nfc-get")
+            .setPriority(Priority.MEDIUM)
+            .build()
+            .getAsJSONObject(object : JSONObjectRequestListener {
+                override fun onResponse(response: JSONObject) {
+                    tagName = response.getString("name")
+                    Log.d("UserData", "read name from tag: $tagName")
+                }
+
+                override fun onError(anError: ANError) {
+                    Log.e("UserData", "Error updating Toast Value: $anError")
+                }
+            })
 
         // Notify observers with the updated user data
         _userData.value = this
