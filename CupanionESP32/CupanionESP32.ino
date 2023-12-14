@@ -4,8 +4,11 @@
 #include "imagedata.h"
 
 #include <stdlib.h>
+
 #include <WiFi.h>
-#include <WebServer.h>
+#include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+//#include <WebServer.h>
 #include <ArduinoJson.h>
 
 #include <Adafruit_PN532.h>
@@ -41,7 +44,7 @@ Adafruit_PN532 nfc(PN532_IRQ, PN532_RESET);
 int user_toasts = 0;
 
 // The Webserver on port 80
-WebServer server(80);
+AsyncWebServer server(80);
 
 // Struct fot he received UserData
 UserData received_UserData;
@@ -115,7 +118,7 @@ bool checkForNFC_Information(){
     }
   
     Serial.println("");
-    //nfc_event_occured = true;
+    nfc_event_occured = true;
   }
   return true;
 }
@@ -169,20 +172,19 @@ void handle_NFC_getRequest(){
   serializeJson(doc, postContent);
 
   //server.sendHeader("Connection", "close");
-  server.sendHeader("Content-Type", "application/json");
+  //server.sendHeader("Content-Type", "application/json");
   //server.send(200, "text/html", serverIndex);
-  server.send(200, "application/json", postContent);
+  //server.send(200, "application/json", postContent);
      
 }
 
 // Handles HTTP "/post" requests from the Android device
-void handlePost() {
-    Serial.println("Received a POST request...");
-    server.send(200, "text/plain", "POST request received successfully");
+void handlePost(String raw_data) {
+  Serial.println("Received a POST request...");
 
-  if (server.hasArg("plain")) {
+ // if (server.hasArg("plain")) {
     // Deserialize the raw received JSON string into the JSON document
-    String raw_data = server.arg("plain");
+    //String raw_data = server.arg("plain");
 
     Serial.print("Received JSON: ");
     Serial.println(raw_data);
@@ -213,9 +215,7 @@ void handlePost() {
       strlcpy(received_UserData.user_last_known_drink, received_UserData.user_current_drink, sizeof(received_UserData.user_last_known_drink));
       normalDisplayUpdate(DisplayImage);
     }
-    } else {
-        server.send(400, "text/plain", "Bad Request");
-    }
+ // }
 }
 
 // Printing the received UserData to the Serial Monitor in a readable format
@@ -248,14 +248,25 @@ void printUserData() {
 
 // setting up all the server functions
 void setupServer() {
-  WiFi.softAP("ESP32"); // name of the WIFI Network
-  server.on("/post", HTTP_POST, handlePost); // how to handle "/post" HTTP requests
-  server.on("/nfc-get", HTTP_GET, handle_NFC_getRequest);  // how to handle "/nfc-get" HTTP requests
-  server.begin(); // starts the server
+  WiFi.softAP("Cupanion"); // name of the WIFI Network
 
   // Print the ESP32's IP address once to Serial Monitor
   Serial.print("Server is listening for incoming connections under the following IP-Adress: ");
   Serial.println(WiFi.softAPIP().toString() + "\n");
+
+  //server.on("/post", HTTP_POST, handlePost); 
+
+  server.on("/post", HTTP_POST, [](AsyncWebServerRequest *request){ // how to handle "/post" HTTP requests
+    String message;
+    message = request->getParam("plain", true)->value();
+    handlePost(message);
+  });
+
+  server.on("/nfc-get", HTTP_GET, [](AsyncWebServerRequest *request){
+    handle_NFC_getRequest();  // how to handle "/nfc-get" HTTP requests
+  });
+
+  server.begin(); // starts the server
 }
 
 /*Graphics Stuff ----------------------------------------------------------------*/
@@ -394,7 +405,7 @@ unsigned long lastUpdateTime = 0;
 void loop() {
 
   //Comment out this line for Network functionality
-  //checkForNFC_Information();
+  checkForNFC_Information();
   
   /*
   unsigned long currentTime = millis();
@@ -408,8 +419,8 @@ void loop() {
   if (nfc_event_occured == true){
     NFCDisplayUpdate(DisplayImage);
     nfc_event_occured = false;
-  } else {
+  //} else {
     // Handling further interaction with the server
-    server.handleClient();
+    //server.handleClient();
   }
 }
