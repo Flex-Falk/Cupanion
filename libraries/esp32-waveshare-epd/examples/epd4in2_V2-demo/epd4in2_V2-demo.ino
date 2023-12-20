@@ -6,7 +6,8 @@
 #include <stdlib.h>
 
 /* Entry point ----------------------------------------------------------------*/
-void setup(){
+void setup()
+{
     printf("EPD_4IN2_V2_test Demo\r\n");
     DEV_Module_Init();
 
