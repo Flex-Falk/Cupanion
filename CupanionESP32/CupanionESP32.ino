@@ -177,7 +177,7 @@ void handle_NFC_getRequest(){
   //server.send(200, "application/json", postContent);
      
 }
-
+/*
 // Handles HTTP "/post" requests from the Android device
 void handlePost(String raw_data) {
   Serial.println("Received a POST request...");
@@ -217,6 +217,11 @@ void handlePost(String raw_data) {
     }
  // }
 }
+*/
+void handlePost(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
+{
+  Serial.println("handle post request");   
+}
 
 // Printing the received UserData to the Serial Monitor in a readable format
 void printUserData() {
@@ -249,6 +254,7 @@ void printUserData() {
 // setting up all the server functions
 void setupServer() {
   WiFi.softAP("Cupanion"); // name of the WIFI Network
+    
 
   // Print the ESP32's IP address once to Serial Monitor
   Serial.print("Server is listening for incoming connections under the following IP-Adress: ");
@@ -257,12 +263,46 @@ void setupServer() {
   //server.on("/post", HTTP_POST, handlePost); 
 
   server.on("/post", HTTP_POST, [](AsyncWebServerRequest *request){ // how to handle "/post" HTTP requests
+    request->send(200, "text/plain", "");}, NULL, handlePost);
+    /*
+    Serial.println("inside server.on post");
     String message;
-    message = request->getParam("plain", true)->value();
-    handlePost(message);
-  });
+    int params2 = request->params();
+    Serial.println(params2);
+
+    if(request->hasParam("toll-str")){
+      Serial.println("aaaaaaa");
+      message = request->getParam("toll-str", true)->value();
+      Serial.println(message);
+      handlePost(message);
+    }
+    if(request->hasParam("toll-str",true)){
+      Serial.println("bbbbbb");
+      message = request->getParam("toll-str", true)->value();
+      Serial.println(message);
+      handlePost(message);
+    }
+    //List all parameters
+    int params = request->params();
+    for(int i=0;i<params;i++){
+      AsyncWebParameter* p = request->getParam(i);
+      Serial.printf("POST[%s]: %s\n", p->name().c_str(), p->value().c_str());
+    
+      if(p->isFile()){ //p->isPost() is also true
+        Serial.printf("FILE[%s]: %s, size: %u\n", p->name().c_str(), p->value().c_str(), p->size());
+      } else if(p->isPost()){
+        Serial.printf("POST[%s]: %s\n", p->name().c_str(), p->value().c_str());
+      } else {
+        Serial.printf("GET[%s]: %s\n", p->name().c_str(), p->value().c_str());
+      }
+    }*/
+
+
+    
+  //});
 
   server.on("/nfc-get", HTTP_GET, [](AsyncWebServerRequest *request){
+    Serial.println("inside server.on get");
     handle_NFC_getRequest();  // how to handle "/nfc-get" HTTP requests
   });
 
