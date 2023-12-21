@@ -10,6 +10,7 @@
 #include <ESPAsyncWebServer.h>
 //#include <WebServer.h>
 #include <ArduinoJson.h>
+#include "AsyncJson.h"
 
 #include <Adafruit_PN532.h>
 
@@ -101,10 +102,11 @@ bool checkForNFC_Information(){
     char textBuffer[240];
     char searchWord[] = "VCARD";
     for(int z=0; z<240; z++){
-      if(complete_data[z] != 0){ textBuffer[z] = complete_data[z]; } //only
-      else{textBuffer[z] = 32; } //If the character in the complete_data is not usable, it is replaced with a new line
-      //Serial.print(textBuffer[z]);
-      //Serial.print(" ");
+      if(complete_data[z] != 0){ 
+        textBuffer[z] = complete_data[z]; //only
+      }else{
+        textBuffer[z] = 32; } //If the character in the complete_data is not usable, it is replaced with a new line
+      
     }
 
     int namebegin = findWord(textBuffer, "FN:", 0, 1);
@@ -133,15 +135,13 @@ int findWord(char textChar[], char wordToFind[], int startIndex, bool addWordLen
     int WordLength = strlen(wordToFindP);
     //WordLength = WordLength - 1; //Null terminierung nicht vergleichen
     int TextLength = strlen(textChar);
-    //Serial.print("Text Length:");
-    //Serial.print(TextLength);
+    
     Serial.println("Extracting name from contact information...");
     char compareChar[WordLength];
     
     for(int i=startIndex; i<(TextLength-WordLength); i++){   
       for(int c=0; c<WordLength; c++){
         compareChar[c] = textCharP[i+c];
-        //Serial.print(compareChar[c]);
       }
     
       int wrongWord = 0;
@@ -162,29 +162,18 @@ int findWord(char textChar[], char wordToFind[], int startIndex, bool addWordLen
 }
 
 /*Networking Stuff ----------------------------------------------------------------*/
+String postContent = ""; //String to send on GET request
 
 void handle_NFC_getRequest(){
-  
   DynamicJsonDocument doc(json_struct_size);
-  //doc["name"] = nameFromTag;
-  doc["name"] = "TagName";
-  String postContent = "";
-  serializeJson(doc, postContent);
-
-  //server.sendHeader("Connection", "close");
-  //server.sendHeader("Content-Type", "application/json");
-  //server.send(200, "text/html", serverIndex);
-  //server.send(200, "application/json", postContent);
-     
+  doc["name"] = nameFromTag;
+  //doc["name"] = "TagName";
+  serializeJson(doc, postContent); 
 }
-/*
+
 // Handles HTTP "/post" requests from the Android device
 void handlePost(String raw_data) {
   Serial.println("Received a POST request...");
-
- // if (server.hasArg("plain")) {
-    // Deserialize the raw received JSON string into the JSON document
-    //String raw_data = server.arg("plain");
 
     Serial.print("Received JSON: ");
     Serial.println(raw_data);
@@ -215,12 +204,6 @@ void handlePost(String raw_data) {
       strlcpy(received_UserData.user_last_known_drink, received_UserData.user_current_drink, sizeof(received_UserData.user_last_known_drink));
       normalDisplayUpdate(DisplayImage);
     }
- // }
-}
-*/
-void handlePost(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
-{
-  Serial.println("handle post request");   
 }
 
 // Printing the received UserData to the Serial Monitor in a readable format
@@ -254,56 +237,33 @@ void printUserData() {
 // setting up all the server functions
 void setupServer() {
   WiFi.softAP("Cupanion"); // name of the WIFI Network
-    
 
   // Print the ESP32's IP address once to Serial Monitor
   Serial.print("Server is listening for incoming connections under the following IP-Adress: ");
   Serial.println(WiFi.softAPIP().toString() + "\n");
 
   //server.on("/post", HTTP_POST, handlePost); 
-
-  server.on("/post", HTTP_POST, [](AsyncWebServerRequest *request){ // how to handle "/post" HTTP requests
-    request->send(200, "text/plain", "");}, NULL, handlePost);
-    /*
-    Serial.println("inside server.on post");
-    String message;
-    int params2 = request->params();
-    Serial.println(params2);
-
-    if(request->hasParam("toll-str")){
-      Serial.println("aaaaaaa");
-      message = request->getParam("toll-str", true)->value();
-      Serial.println(message);
-      handlePost(message);
+  AsyncCallbackJsonWebHandler *handler = new AsyncCallbackJsonWebHandler("/post", [](AsyncWebServerRequest *request, JsonVariant &json) {
+    StaticJsonDocument<200> data;
+    if (json.is<JsonArray>())
+    {
+      data = json.as<JsonArray>();
     }
-    if(request->hasParam("toll-str",true)){
-      Serial.println("bbbbbb");
-      message = request->getParam("toll-str", true)->value();
-      Serial.println(message);
-      handlePost(message);
+    else if (json.is<JsonObject>())
+    {
+      data = json.as<JsonObject>();
     }
-    //List all parameters
-    int params = request->params();
-    for(int i=0;i<params;i++){
-      AsyncWebParameter* p = request->getParam(i);
-      Serial.printf("POST[%s]: %s\n", p->name().c_str(), p->value().c_str());
-    
-      if(p->isFile()){ //p->isPost() is also true
-        Serial.printf("FILE[%s]: %s, size: %u\n", p->name().c_str(), p->value().c_str(), p->size());
-      } else if(p->isPost()){
-        Serial.printf("POST[%s]: %s\n", p->name().c_str(), p->value().c_str());
-      } else {
-        Serial.printf("GET[%s]: %s\n", p->name().c_str(), p->value().c_str());
-      }
-    }*/
+    String response;
+    serializeJson(data, response);
+    request->send(200, "application/json", response);
 
+    handlePost(response);
+  });
+  server.addHandler(handler);
 
-    
-  //});
-
-  server.on("/nfc-get", HTTP_GET, [](AsyncWebServerRequest *request){
-    Serial.println("inside server.on get");
-    handle_NFC_getRequest();  // how to handle "/nfc-get" HTTP requests
+  server.on("/nfc-get", HTTP_GET, [](AsyncWebServerRequest *request) {
+    handle_NFC_getRequest();
+    request->send(200, "application/json", postContent);
   });
 
   server.begin(); // starts the server
@@ -438,29 +398,16 @@ void setup(){
   normalDisplayUpdate(DisplayImage);
 }
 
-// Variable to keep track of the last time the display was updated
-unsigned long lastUpdateTime = 0;
 
 /* The main loop -------------------------------------------------------------*/
 void loop() {
 
-  //Comment out this line for Network functionality
+  //Constantly checks for NFC Tags
   checkForNFC_Information();
   
-  /*
-  unsigned long currentTime = millis();
-  if (currentTime - lastUpdateTime >= 1000) {
-    // Update the last update time
-    lastUpdateTime = currentTime;
-  }
-  */
-
   // NFC events should alwyays have the higher relevance than other stuff
   if (nfc_event_occured == true){
     NFCDisplayUpdate(DisplayImage);
     nfc_event_occured = false;
-  //} else {
-    // Handling further interaction with the server
-    //server.handleClient();
   }
 }
