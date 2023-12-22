@@ -31,12 +31,6 @@ class DrinkSelectionScreen : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         userDataViewModel = ViewModelProvider(requireActivity()).get(UserData::class.java)
 
-        // Sends UserData to the ESP32
-        userDataViewModel.sendUserData()
-
-        // Update the Toast Value from the ESP32
-        userDataViewModel.updateToastValue()
-
         // Set click listeners for drink buttons and update the current drink
         binding.buttonSpeziSchuss.setOnClickListener {
             userDataViewModel.updateCurrentDrink("Spezi mit Schuss")
@@ -54,8 +48,8 @@ class DrinkSelectionScreen : Fragment() {
             userDataViewModel.updateCurrentDrink("Apfel Hochball")
             findNavController().navigate(R.id.action_toFillingQuantityScreen)
         }
-        binding.buttonGrossmuttersSpezi.setOnClickListener {
-            userDataViewModel.updateCurrentDrink("Großmutters Spezi")
+        binding.buttonOmasSpezi.setOnClickListener {
+            userDataViewModel.updateCurrentDrink("Omas Spezi")
             findNavController().navigate(R.id.action_toFillingQuantityScreen)
         }
         binding.buttonLeckeresKalibrierungsgetraenk.setOnClickListener {

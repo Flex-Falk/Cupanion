@@ -1,11 +1,13 @@
 package com.example.cupanionapp
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.androidnetworking.AndroidNetworking.post
 import com.androidnetworking.AndroidNetworking.get
+import com.androidnetworking.AndroidNetworking.post
 import com.androidnetworking.common.Priority
 import com.androidnetworking.error.ANError
 import com.androidnetworking.interfaces.JSONObjectRequestListener
@@ -15,8 +17,8 @@ import org.json.JSONObject
  * View Model for the UserData.
  */
 class UserData : ViewModel() {
-    private val _userData = MutableLiveData<UserData>()
-    val userData: LiveData<UserData> get() = _userData
+    private val _userData = MutableLiveData<UserData?>()
+    val userData: LiveData<UserData?> get() = _userData
 
     // This represents the username.
     var user_name: String? = ""
@@ -41,14 +43,16 @@ class UserData : ViewModel() {
 
 
     // This shows how many toasts the user has done (NFC functionality required).
-    var user_toasts: Int? = 0
+    private val _userToasts = MutableLiveData<Int>(0)
+    var user_toasts: LiveData<Int> = MutableLiveData<Int>().apply { value = _userToasts.value }
+        get() = _userToasts
 
     // Function to update current drink
     fun updateCurrentDrink(drink: String) {
         user_current_drink = drink
 
         // Notify observers with the updated user data
-        _userData.value = this
+        _userData.postValue(this)
     }
 
     // Function to update user data
@@ -57,7 +61,7 @@ class UserData : ViewModel() {
         user_goal = goal
 
         // Notify observers with the updated user data
-        _userData.value = this
+        _userData.postValue(this)
     }
 
     // returns true if a user drunk an drink of alcoholicBeverages list
@@ -128,26 +132,39 @@ class UserData : ViewModel() {
             })
     }
     // Function to update the toast value gotten from the ESP32
-    // This will probably be implemented through a HTTP Get Request similar to the sendUserData() function, but backwards
-    fun updateToastValue(){
-        user_toasts = 0
-        var tagName = "name"
+    // Should be called every 5 seconds to be up to date
+    fun updateToastValue(context: Context) {
 
         get("http://192.168.4.1/nfc-get")
             .setPriority(Priority.MEDIUM)
             .build()
             .getAsJSONObject(object : JSONObjectRequestListener {
-                override fun onResponse(response: JSONObject) {
-                    tagName = response.getString("name")
-                    Log.d("UserData", "read name from tag: $tagName")
-                }
 
+                override fun onResponse(response: JSONObject) {
+                    Log.d("NFC", response.toString())
+
+                    val tagName = response.getString("name")
+                    val tagToasts_str = response.getString("toasts")
+                    var tagToasts = -1
+                    try {
+                        tagToasts = tagToasts_str.toInt()
+                    } catch (nfe: NumberFormatException) {
+                        Log.d("NFC", "Could not parse, NumberFormatException")
+                    }
+
+                    if(tagToasts != (user_toasts.value ?: 0)){
+                        Log.d("NFC", "read name from tag: $tagName")
+                        if(tagName == ""){
+                            Toast.makeText(context, "Angestoßen mit $tagName! \nDas ist dein $tagToasts. Anstoßer!", Toast.LENGTH_LONG).show()
+                        } else {
+                            Toast.makeText(context, "Das ist dein $tagToasts. Anstoßer!", Toast.LENGTH_LONG).show()
+                        }
+                        _userToasts.postValue(tagToasts)
+                    }
+                }
                 override fun onError(anError: ANError) {
-                    Log.e("UserData", "Error updating Toast Value: $anError")
+                    Log.e("NFC", "Error updating Toast Value: $anError")
                 }
             })
-
-        // Notify observers with the updated user data
-        _userData.value = this
     }
 }

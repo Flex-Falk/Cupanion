@@ -101,7 +101,7 @@ class CanvasView @JvmOverloads constructor(
             createNameAndLineML(canvas,"Cognac", 120, Color.BLACK)
             drawGlassOutlines(canvas, Color.LTGRAY)
         }
-        if(state == "Großmutters Spezi"){
+        if(state == "Omas Spezi"){
             createNameAndLineML(canvas,"Fanta", 120, Color.BLACK)
             createNameAndLineML(canvas,"Cola", 120, Color.BLACK)
             drawGlassOutlines(canvas, Color.LTGRAY)

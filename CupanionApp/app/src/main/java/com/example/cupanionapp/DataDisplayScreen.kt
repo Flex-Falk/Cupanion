@@ -40,13 +40,11 @@ class DataDisplayScreen : Fragment() {
         // Sends UserData to the ESP32
         userDataViewModel.sendUserData()
 
-        // Update the Toast Value from the ESP32
-        userDataViewModel.updateToastValue()
-
         // Display user data.
         binding.textViewUserName.text = "Name: ${userDataViewModel.user_name}"
-        binding.textViewUserToasts.text = "Mit Leuten angestoßen: ${userDataViewModel.user_toasts}"
-
+        userDataViewModel.user_toasts.observe(viewLifecycleOwner) { toasts ->
+            binding.textViewUserToasts.text = "Mit Leuten angestoßen: ${toasts ?: "0"}"
+        }
         // Display the drinking progress.
         binding.textViewUserProgress.text = "Trinkfortschritt: ${userDataViewModel.user_drinks_number.toString()} / ${userDataViewModel.user_goal.toString()}"
 

@@ -76,12 +76,15 @@ void nfc_init(){
   }
 }
 
+const int maxDataSize = 4 * 60;
+const int bufferSize = 240;
+
 bool checkForNFC_Information(){
   uint8_t success;
   uint8_t uid[] = { 0, 0, 0, 0, 0, 0, 0 };
   uint8_t uidLength;
   uint8_t data[32];
-  uint8_t complete_data[4*60];
+  uint8_t complete_data[maxDataSize];
   
   success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
   if(success){
@@ -96,22 +99,32 @@ bool checkForNFC_Information(){
         }
       }     
     }else{ 
-      Serial.println("This doesn't seem to be an NTAG203 tag (UUID length != 7 bytes)!"); return false; 
+      Serial.println("This doesn't seem to be an NTAG2xx tag (UUID length != 7 bytes)!"); 
+      return false; 
     }
 
-    char textBuffer[240];
-    char searchWord[] = "VCARD";
-    for(int z=0; z<240; z++){
+    char textBuffer[bufferSize];
+
+    for(int z=0; z<bufferSize; z++){
       if(complete_data[z] != 0){ 
         textBuffer[z] = complete_data[z]; //only
       }else{
-        textBuffer[z] = 32; } //If the character in the complete_data is not usable, it is replaced with a new line
-      
+        textBuffer[z] = 32; //If the character in the complete_data is not usable, it is replaced with a new line
+        } 
     }
+
+    // Print out the entire textBuffer
+    Serial.println("Text from the Tag:");
+    for (int i = 0; i < bufferSize; i++) {
+      Serial.print(textBuffer[i]);
+      Serial.print(" ");
+    }
+    Serial.println("");
 
     int namebegin = findWord(textBuffer, "FN:", 0, 1);
     int nameend = findWord(textBuffer, "\n", namebegin, 0);
     char nameToSend[nameend-namebegin+1];
+    
     Serial.print("Name from the Tag: ");
     for(int z=0; z<(nameend-namebegin);z++){
       Serial.print(textBuffer[namebegin+z]);
@@ -120,6 +133,7 @@ bool checkForNFC_Information(){
     }
   
     Serial.println("");
+    user_toasts++;
     nfc_event_occured = true;
   }
   return true;
@@ -136,7 +150,6 @@ int findWord(char textChar[], char wordToFind[], int startIndex, bool addWordLen
     //WordLength = WordLength - 1; //Null terminierung nicht vergleichen
     int TextLength = strlen(textChar);
     
-    Serial.println("Extracting name from contact information...");
     char compareChar[WordLength];
     
     for(int i=startIndex; i<(TextLength-WordLength); i++){   
@@ -165,9 +178,12 @@ int findWord(char textChar[], char wordToFind[], int startIndex, bool addWordLen
 String postContent = ""; //String to send on GET request
 
 void handle_NFC_getRequest(){
+  postContent = ""; //clear postContent
   DynamicJsonDocument doc(json_struct_size);
   doc["name"] = nameFromTag;
-  //doc["name"] = "TagName";
+  doc["toasts"] = user_toasts;
+  Serial.println(postContent);
+
   serializeJson(doc, postContent); 
 }
 
@@ -402,12 +418,15 @@ void setup(){
 /* The main loop -------------------------------------------------------------*/
 void loop() {
 
-  //Constantly checks for NFC Tags
+  //Checks for NFC Tags every second
+  delay(1000);
   checkForNFC_Information();
   
   // NFC events should alwyays have the higher relevance than other stuff
   if (nfc_event_occured == true){
     NFCDisplayUpdate(DisplayImage);
+    delay(10000);
     nfc_event_occured = false;
+    normalDisplayUpdate(DisplayImage);
   }
 }

@@ -34,9 +34,6 @@ class FillingQuantityScreen : Fragment() {
         // Sends UserData to the ESP32
         userDataViewModel.sendUserData()
 
-        // Update the Toast Value from the ESP32
-        userDataViewModel.updateToastValue()
-
         // Display the current drink being mixed.
         binding.textCurrentDrink.text = "Aktuell wird gemixt: ${userDataViewModel.user_current_drink}"
 

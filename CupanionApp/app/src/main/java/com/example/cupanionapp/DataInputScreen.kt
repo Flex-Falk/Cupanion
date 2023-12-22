@@ -36,14 +36,14 @@ class DataInputScreen : Fragment() {
         // Sends UserData to the ESP32
         userDataViewModel.sendUserData()
 
-        // Update the Toast Value from the ESP32
-        userDataViewModel.updateToastValue()
-
         // Observe changes in the entire user data
         userDataViewModel.userData.observe(viewLifecycleOwner) { userData ->
             // Update UI with user data
-            binding.editTextUserName.setText(userData.user_name)
-            binding.editTextUserGoal.setText(userData.user_goal?.toString())
+            if (userData != null) {
+                binding.editTextUserName.setText(userData.user_name)
+                binding.editTextUserGoal.setText(userData.user_goal?.toString())
+
+            }
         }
 
         binding.buttonToDataDisplayScreen.setOnClickListener {

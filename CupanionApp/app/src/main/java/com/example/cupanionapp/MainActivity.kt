@@ -1,6 +1,7 @@
 package com.example.cupanionapp
 
 import android.os.Bundle
+import android.os.Handler
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
@@ -11,17 +12,39 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.lifecycle.ViewModelProvider
 import com.androidnetworking.AndroidNetworking
 import com.example.cupanionapp.databinding.ActivityMainBinding
+
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
+    private lateinit var userDataViewModel: UserData
+
+    // Handler for periodic updates
+    private val handler = Handler()
+
+    // Runnable to update toast value every 5 seconds
+    private val updateToastRunnable = object : Runnable {
+        override fun run() {
+            // Call the updateToastValue function in your UserData ViewModel
+            userDataViewModel.updateToastValue(applicationContext)
+
+            // Schedule the next update after 5 seconds
+            handler.postDelayed(this, 5000)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
+        // Access the ViewModel to get user data
+        userDataViewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application)).get(UserData::class.java)
 
         super.onCreate(savedInstanceState)
 
@@ -48,6 +71,16 @@ class MainActivity : AppCompatActivity() {
                 supportActionBar?.setDisplayHomeAsUpEnabled(true)
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        handler.postDelayed(updateToastRunnable, 5000) // Start the periodic update when the activity is resumed
+    }
+
+    override fun onPause() {
+        super.onPause()
+        handler.removeCallbacks(updateToastRunnable) // Stop the periodic update when the activity is paused
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
