@@ -2,6 +2,7 @@ package com.example.cupanionapp
 
 import android.content.Context
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -11,6 +12,7 @@ import com.androidnetworking.AndroidNetworking.post
 import com.androidnetworking.common.Priority
 import com.androidnetworking.error.ANError
 import com.androidnetworking.interfaces.JSONObjectRequestListener
+import com.google.android.material.snackbar.Snackbar
 import org.json.JSONObject
 
 /**
@@ -133,7 +135,7 @@ class UserData : ViewModel() {
     }
     // Function to update the toast value gotten from the ESP32
     // Should be called every 5 seconds to be up to date
-    fun updateToastValue(context: Context) {
+    fun updateToastValue(view: View) {
 
         get("http://192.168.4.1/nfc-get")
             .setPriority(Priority.MEDIUM)
@@ -154,11 +156,16 @@ class UserData : ViewModel() {
 
                     if(tagToasts != (user_toasts.value ?: 0)){
                         Log.d("NFC", "read name from tag: $tagName")
-                        if(tagName == ""){
-                            Toast.makeText(context, "Angestoßen mit $tagName! \nDas ist dein $tagToasts. Anstoßer!", Toast.LENGTH_LONG).show()
+                        var snackbarMessage = ""
+                        /*if(tagName == ""){
+                            snackbarMessage  = "Angestoßen mit $tagName! \nDas ist dein $tagToasts. Anstoßer!"
                         } else {
-                            Toast.makeText(context, "Das ist dein $tagToasts. Anstoßer!", Toast.LENGTH_LONG).show()
-                        }
+                            snackbarMessage  = "Das ist dein $tagToasts. Anstoßer!"
+                        }*/
+                        snackbarMessage  = "Das ist dein $tagToasts. Anstoßer!"
+                        Snackbar.make(view, snackbarMessage, Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Cool!") { }
+                            .show()
                         _userToasts.postValue(tagToasts)
                     }
                 }

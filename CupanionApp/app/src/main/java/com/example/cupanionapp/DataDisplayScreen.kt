@@ -46,7 +46,15 @@ class DataDisplayScreen : Fragment() {
             binding.textViewUserToasts.text = "Mit Leuten angestoßen: ${toasts ?: "0"}"
         }
         // Display the drinking progress.
-        binding.textViewUserProgress.text = "Trinkfortschritt: ${userDataViewModel.user_drinks_number.toString()} / ${userDataViewModel.user_goal.toString()}"
+        if(userDataViewModel.user_drinks_number!! > userDataViewModel.user_goal!!){
+            binding.textViewUserProgress.text = "Trinkfortschritt: ${userDataViewModel.user_drinks_number.toString()} / ${userDataViewModel.user_goal.toString()}"
+            binding.textViewUserProgress.setTextColor(Color.RED)
+        } else if (userDataViewModel.user_drinks_number!! == userDataViewModel.user_goal!!){
+            binding.textViewUserProgress.text = "Trinkfortschritt: ${userDataViewModel.user_drinks_number.toString()} / ${userDataViewModel.user_goal.toString()}"
+            binding.textViewUserProgress.setTextColor(Color.GREEN)
+        } else{
+            binding.textViewUserProgress.text = "Trinkfortschritt: ${userDataViewModel.user_drinks_number.toString()} / ${userDataViewModel.user_goal.toString()}"
+        }
 
         // Display if the user should drive or not.
         if(userDataViewModel.user_drive == false){
@@ -56,6 +64,7 @@ class DataDisplayScreen : Fragment() {
         } else{
             binding.textViewUserDrive.text = "Fahrtüchtigkeit: "
             binding.textViewUserDrive2.text = "In Ordnung"
+            binding.textViewUserDrive2.setTextColor(Color.GREEN)
         }
 
         // Display what drinks the user has drunk.
@@ -65,13 +74,17 @@ class DataDisplayScreen : Fragment() {
             binding.textViewUserDrinksList.text ="Bisherige Getränke: noch keine"
         }
 
-        // Toast when user has reached given target
+        // Snackbar when user has reached given target
         if(userDataViewModel.user_drinks_number!! >= userDataViewModel.user_goal!!){
-            Toast.makeText(requireContext(), "Trinkziel erreicht!", Toast.LENGTH_LONG).show()
+            Snackbar.make(view, "Trinkziel erreicht!", Snackbar.LENGTH_INDEFINITE)
+                .setAction("Endlich!") { }
+                .show()
         }
 
         if(userDataViewModel.user_drinks_number!! > userDataViewModel.user_goal!!){
-            Toast.makeText(requireContext(), "Trinkziel überschritten!", Toast.LENGTH_LONG).show()
+            Snackbar.make(view, "Trinkziel überschritten!", Snackbar.LENGTH_INDEFINITE)
+                .setAction("Alles gut bei dir?") { }
+                .show()
         }
 
         binding.buttonToDrinkSelectionScreen.setOnClickListener {

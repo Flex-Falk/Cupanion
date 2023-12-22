@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
     private val updateToastRunnable = object : Runnable {
         override fun run() {
             // Call the updateToastValue function in your UserData ViewModel
-            userDataViewModel.updateToastValue(applicationContext)
+            userDataViewModel.updateToastValue(binding.root)
 
             // Schedule the next update after 5 seconds
             handler.postDelayed(this, 5000)

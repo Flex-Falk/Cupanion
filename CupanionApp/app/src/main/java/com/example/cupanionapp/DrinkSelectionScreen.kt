@@ -52,8 +52,8 @@ class DrinkSelectionScreen : Fragment() {
             userDataViewModel.updateCurrentDrink("Omas Spezi")
             findNavController().navigate(R.id.action_toFillingQuantityScreen)
         }
-        binding.buttonLeckeresKalibrierungsgetraenk.setOnClickListener {
-            userDataViewModel.updateCurrentDrink("Leckeres Kalibrierungs-Drink")
+        binding.buttonLeckererKalibrierungsgetraenk.setOnClickListener {
+            userDataViewModel.updateCurrentDrink("Leckerer Kalibrierungs-Drink")
             findNavController().navigate(R.id.action_toFillingQuantityScreen)
         }
     }
