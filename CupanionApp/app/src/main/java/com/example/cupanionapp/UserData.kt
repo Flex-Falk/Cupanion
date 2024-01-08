@@ -157,12 +157,12 @@ class UserData : ViewModel() {
                     if(tagToasts != (user_toasts.value ?: 0)){
                         Log.d("NFC", "read name from tag: $tagName")
                         var snackbarMessage = ""
-                        /*if(tagName == ""){
+                        if(tagName != ""){
                             snackbarMessage  = "Angestoßen mit $tagName! \nDas ist dein $tagToasts. Anstoßer!"
                         } else {
                             snackbarMessage  = "Das ist dein $tagToasts. Anstoßer!"
-                        }*/
-                        snackbarMessage  = "Das ist dein $tagToasts. Anstoßer!"
+                        }
+                        //snackbarMessage  = "Das ist dein $tagToasts. Anstoßer!"
                         Snackbar.make(view, snackbarMessage, Snackbar.LENGTH_INDEFINITE)
                             .setAction("Cool!") { }
                             .show()
