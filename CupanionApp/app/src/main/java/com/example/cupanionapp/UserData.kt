@@ -1,9 +1,11 @@
 package com.example.cupanionapp
 
+
 import android.content.Context
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,6 +16,7 @@ import com.androidnetworking.error.ANError
 import com.androidnetworking.interfaces.JSONObjectRequestListener
 import com.google.android.material.snackbar.Snackbar
 import org.json.JSONObject
+
 
 /**
  * View Model for the UserData.
@@ -156,17 +159,27 @@ class UserData : ViewModel() {
 
                     if(tagToasts != (user_toasts.value ?: 0)){
                         Log.d("NFC", "read name from tag: $tagName")
-                        var snackbarMessage = ""
+
+                        val builder: AlertDialog.Builder = AlertDialog.Builder(view.context)
                         if(tagName != ""){
-                            snackbarMessage  = "Angestoßen mit $tagName! \nDas ist dein $tagToasts. Anstoßer!"
+                            builder
+                                .setMessage("Das ist dein $tagToasts. Anstoßer!")
+                                .setTitle("Angestoßen mit $tagName!")
+                                .setPositiveButton("Cool!") { dialog, which ->
+                                    // Do something.
+                                }
+
                         } else {
-                            snackbarMessage  = "Das ist dein $tagToasts. Anstoßer!"
+                            builder
+                                .setMessage("Das ist dein $tagToasts. Anstoßer!")
+                                .setTitle("Angestoßen!")
+                                .setPositiveButton("Cool!") { dialog, which ->
+                                    // Do something.
+                                }
                         }
-                        //snackbarMessage  = "Das ist dein $tagToasts. Anstoßer!"
-                        Snackbar.make(view, snackbarMessage, Snackbar.LENGTH_INDEFINITE)
-                            .setAction("Cool!") { }
-                            .show()
                         _userToasts.postValue(tagToasts)
+                        val dialog: AlertDialog = builder.create()
+                        dialog.show()
                     }
                 }
                 override fun onError(anError: ANError) {
