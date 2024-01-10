@@ -286,7 +286,7 @@ void printUserData() {
 
 // setting up all the server functions
 void setupServer() {
-  WiFi.softAP("Cupanion"); // name of the WIFI Network
+  WiFi.softAP("CupanionRED"); // name of the WIFI Network
 
   // Print the ESP32's IP address once to Serial Monitor
   Serial.print("Server is listening for incoming connections under the following IP-Adress: ");
