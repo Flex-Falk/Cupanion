@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.cupanionapp.databinding.DataDisplayScreenBinding
@@ -75,16 +76,36 @@ class DataDisplayScreen : Fragment() {
         }
 
         // Snackbar when user has reached given target
-        if(userDataViewModel.user_drinks_number!! >= userDataViewModel.user_goal!!){
+        val builder: AlertDialog.Builder = AlertDialog.Builder(view.context)
+        if(userDataViewModel.user_drinks_number!! == userDataViewModel.user_goal!!){
+            builder
+                .setMessage("Ab jetzt lieber nicht mehr trinken.")
+                .setTitle("Trinkziel erreicht!")
+                .setPositiveButton("Endlich!") { dialog, which ->
+                    // Do something.
+                }
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+            /*
             Snackbar.make(view, "Trinkziel erreicht!", Snackbar.LENGTH_INDEFINITE)
                 .setAction("Endlich!") { }
                 .show()
+             */
         }
-
         if(userDataViewModel.user_drinks_number!! > userDataViewModel.user_goal!!){
+            builder
+                .setMessage("Du bist schon über dein Trinkziel.")
+                .setTitle("Alles gut bei dir?")
+                .setPositiveButton("Ok") { dialog, which ->
+                    // Do something.
+                }
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+            /*
             Snackbar.make(view, "Trinkziel überschritten!", Snackbar.LENGTH_INDEFINITE)
                 .setAction("Alles gut bei dir?") { }
                 .show()
+             */
         }
 
         binding.buttonToDrinkSelectionScreen.setOnClickListener {
